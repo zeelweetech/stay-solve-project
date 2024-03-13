@@ -2,6 +2,9 @@ import React from "react";
 
 // Admin Imports
 import MainDashboard from "views/admin/default";
+import Organization from "views/admin/Organization";
+import Location from "views/admin/Location";
+import User from "views/admin/User";
 import NFTMarketplace from "views/admin/marketplace";
 import Profile from "views/admin/profile";
 import DataTables from "views/admin/tables";
@@ -28,20 +31,41 @@ const routes = [
     component: <MainDashboard />,
   },
   {
-    name: "NFT Marketplace",
+    name: "Organization",
     layout: "/",
-    path: "nft-marketplace",
-    icon: <MdOutlineShoppingCart className="h-6 w-6" />,
-    component: <NFTMarketplace />,
-    secondary: true,
+    path: "organization",
+    icon: <MdHome className="h-6 w-6" />,
+    component: <Organization />,
   },
   {
-    name: "Data Tables",
+    name: "Location",
     layout: "/",
-    icon: <MdBarChart className="h-6 w-6" />,
-    path: "data-tables",
-    component: <DataTables />,
+    path: "location",
+    icon: <MdHome className="h-6 w-6" />,
+    component: <Location />,
   },
+  {
+    name: "User",
+    layout: "/",
+    path: "user",
+    icon: <MdHome className="h-6 w-6" />,
+    component: <User />,
+  },
+  // {
+  //   name: "NFT Marketplace",
+  //   layout: "/",
+  //   path: "nft-marketplace",
+  //   icon: <MdOutlineShoppingCart className="h-6 w-6" />,
+  //   component: <NFTMarketplace />,
+  //   secondary: true,
+  // },
+  // {
+  //   name: "Data Tables",
+  //   layout: "/",
+  //   icon: <MdBarChart className="h-6 w-6" />,
+  //   path: "data-tables",
+  //   component: <DataTables />,
+  // },
   {
     name: "Profile",
     layout: "/",
