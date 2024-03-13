@@ -3,12 +3,17 @@ import { FcGoogle } from "react-icons/fc";
 import Checkbox from "components/checkbox";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { AddLogin } from "Api/authApi";
+import { jwtDecode } from "jwt-decode";
+import Loader from "components/Loader";
 
 export default function SignIn() {
   const navigate = useNavigate();
   const [values, setValues] = useState({});
   const [errors, setErrors] = useState({});
   const [rememberMe, setRememberMe] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const storedEmail = localStorage.getItem("rememberedEmail");
@@ -42,10 +47,51 @@ export default function SignIn() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  function setCookie(name, value, hours) {
+    const now = new Date();
+    const expirationDate = new Date(now.getTime() + hours * 60 * 60 * 1000);
+
+    const expires = "expires=" + expirationDate.toUTCString();
+    document.cookie = `${name}=${value}; ${expires}; path=/`;
+  }
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validation()) {
-      navigate("/dashboard");
+      setLoading(true);
+      const body = {
+        email: values?.email,
+        password: values?.password,
+      };
+      await AddLogin(body)
+        .then((res) => {
+          const decoded = jwtDecode(res?.accessToken);
+          setCookie("token", res?.accessToken, 24);
+          localStorage.setItem("token", res?.accessToken);
+          localStorage.setItem("role", decoded?.role);
+          localStorage.setItem("usernameOrEmail", decoded?.usernameOrEmail);
+          if (localStorage.getItem("token") && localStorage.getItem("role")) {
+            navigate("/dashboard");
+          }
+          setLoading(false);
+          if (rememberMe) {
+            localStorage.setItem("rememberedEmail", values?.email);
+            localStorage.setItem("rememberedPassword", values?.password);
+            localStorage.setItem("rememberMe", "true");
+          } else {
+            localStorage.removeItem("rememberedEmail");
+            localStorage.removeItem("rememberedPassword");
+            localStorage.removeItem("rememberMe");
+          }
+          setValues({});
+          toast.success(res?.message);
+          window.location.reload();
+        })
+        .catch((err) => {
+          console.log("err", err);
+          toast.error(err?.response?.data?.error);
+          setLoading(false);
+        });
     }
   };
 
@@ -115,6 +161,7 @@ export default function SignIn() {
           onClick={(e) => handleSubmit(e)}
         >
           Sign In
+          {loading && <Loader height={25} width={25} />}
         </button>
       </div>
     </div>
