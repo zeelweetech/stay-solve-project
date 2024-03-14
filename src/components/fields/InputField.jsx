@@ -26,6 +26,7 @@ function InputField(props) {
   const togglePasswordVisibility = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
+  
 
   return (
     <div className={`${extra} relative`}>
