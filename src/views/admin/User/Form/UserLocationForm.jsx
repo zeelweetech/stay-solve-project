@@ -16,7 +16,7 @@ function UserLocationForm({ setModal }) {
 
     setErrors((prevErrors) => ({
       ...prevErrors,
-      [name]: undefined,
+      [name]: "",
     }));
 
     console.log("Updated values:", { ...values, [name]: value });
@@ -134,11 +134,11 @@ function UserLocationForm({ setModal }) {
                     <InputField
                       variant="auth"
                       extra="mb-3"
-                      label="  Name*"
+                      label="Name*"
                       placeholder=" Enter Your Name"
-                      id=" name"
+                      id="name"
                       type="text"
-                      name=" name"
+                      name="name"
                       value={values?.name}
                       state={errors?.name && "error"}
                       onChange={(e) => handleOnChange(e)}
@@ -157,9 +157,9 @@ function UserLocationForm({ setModal }) {
                       extra="mb-3"
                       label=" Username*"
                       placeholder=" Enter Your Username"
-                      id=" username"
+                      id="username"
                       type="text"
-                      name=" username"
+                      name="username"
                       value={values?.username}
                       state={errors?.username && "error"}
                       onChange={(e) => handleOnChange(e)}
@@ -175,20 +175,22 @@ function UserLocationForm({ setModal }) {
                     <InputField
                       variant="auth"
                       extra="mb-3"
-                      label=" Email*"
-                      placeholder=" Enter Your  Email"
-                      id=" Email"
+                      label="Email*"
+                      placeholder=" Enter Your Email"
+                      onChange={(e) => handleOnChange(e)}
+                      id="email"
                       type="text"
-                      name=" email "
+                      name="email"
                       value={values?.email}
                       state={errors?.email && "error"}
-                      onChange={(e) => handleOnChange(e)}
                     />
+
                     {errors?.email && (
                       <p className="text-xs text-red-500">{errors?.email}</p>
                     )}
                   </div>
                 </div>
+
 
                 <div class="sm:col-span-3">
                   <InputField
@@ -214,11 +216,11 @@ function UserLocationForm({ setModal }) {
                     <InputField
                       variant="auth"
                       extra="mb-3"
-                      label=" Phone Number*"
+                      label="Phone Number*"
                       placeholder="Enter Your phone number"
-                      id=" phone number"
+                      id="phone number"
                       type="text"
-                      name=" phone_number"
+                      name="phone_number"
                       value={values?.phone_number}
                       state={errors?.phone_number && "error"}
                       onChange={(e) => handleOnChange(e)}
@@ -239,7 +241,7 @@ function UserLocationForm({ setModal }) {
                       extra="mb-3"
                       label=" Upload Picture*"
                       placeholder="upload picture"
-                      id=" picture"
+                      id="picture"
                       type="file"
                       name="picture"
                       onChange={(e) => handleOnChange(e)}
@@ -257,10 +259,10 @@ function UserLocationForm({ setModal }) {
                     <InputField
                       variant="auth"
                       extra="mb-3"
-                      label=" Parent Organization*"
-                      id=" parentlocation"
+                      label="Parent Organization*"
+                      id="parentlocation"
                       type="text"
-                      name=" locationid"
+                      name="locationid"
                       value={values?.locationid}
                       state={errors?.locationid && "error"}
                       onChange={(e) => handleOnChange(e)}

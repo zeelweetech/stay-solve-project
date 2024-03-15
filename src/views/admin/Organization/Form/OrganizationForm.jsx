@@ -1,3 +1,4 @@
+import { AddOrganization } from "Api/OrganizationApi";
 import Card from "components/card";
 import InputField from "components/fields/InputField";
 import React, { useState } from "react";
@@ -93,11 +94,30 @@ function OrganizationForm({ setModal }) {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleOnSubmit = (e) => {
+  const handleOnSubmit = async (e) => {
     e.preventDefault();
 
     if (validation()) {
-      console.log("done$$$");
+      const body = {
+        name: values?.name,
+        phone_number: values?.phone_number,
+        email: values?.email,
+        // verify_code: values?.verifycode,
+        password: values?.password,
+        address_line1: values?.address_line1,
+        address_line2: values?.address_line2,
+        state: values?.state,
+        city: values?.city,
+        zip_code: values?.zip_code,
+        notes: values?.notes,
+      };
+      await  AddOrganization(body)
+      .then ((res)=>{
+        console.log("res",res);
+      })
+      .catch((err)=>{
+        console.log("err",err);
+      })
     }
   };
 
@@ -167,7 +187,7 @@ function OrganizationForm({ setModal }) {
                     <InputField
                       variant="auth"
                       extra="mb-3"
-                      label=" Email*"
+                      label="Email*"
                       placeholder=" Enter Your Email"
                       onChange={(e) => handleOnChange(e)}
                       id="email"

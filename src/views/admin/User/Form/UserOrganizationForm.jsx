@@ -134,11 +134,11 @@ function UserOrganizationForm({ setModal }) {
                     <InputField
                       variant="auth"
                       extra="mb-3"
-                      label="  Name*"
-                      placeholder=" Enter Your Name"
-                      id=" name"
+                      label="Name*"
+                      placeholder="Enter Your Name"
+                      id="name"
                       type="text"
-                      name=" name"
+                      name="name"
                       value={values?.name}
                       state={errors?.name && "error"}
                       onChange={(e) => handleOnChange(e)}
@@ -155,11 +155,11 @@ function UserOrganizationForm({ setModal }) {
                     <InputField
                       variant="auth"
                       extra="mb-3"
-                      label=" Username*"
-                      placeholder=" Enter Your Username"
-                      id=" username"
+                      label="Username*"
+                      placeholder="Enter Your Username"
+                      id="username"
                       type="text"
-                      name=" username"
+                      name="username"
                       value={values?.username}
                       state={errors?.username && "error"}
                       onChange={(e) => handleOnChange(e)}
@@ -175,15 +175,16 @@ function UserOrganizationForm({ setModal }) {
                     <InputField
                       variant="auth"
                       extra="mb-3"
-                      label=" Email*"
-                      placeholder=" Enter Your  Email"
-                      id=" Email"
+                      label="Email*"
+                      placeholder=" Enter Your Email"
+                      onChange={(e) => handleOnChange(e)}
+                      id="email"
                       type="text"
-                      name=" email "
+                      name="email"
                       value={values?.email}
                       state={errors?.email && "error"}
-                      onChange={(e) => handleOnChange(e)}
                     />
+
                     {errors?.email && (
                       <p className="text-xs text-red-500">{errors?.email}</p>
                     )}
@@ -214,11 +215,11 @@ function UserOrganizationForm({ setModal }) {
                     <InputField
                       variant="auth"
                       extra="mb-3"
-                      label=" Phone Number*"
+                      label="Phone Number*"
                       placeholder="Enter Your phone number"
-                      id=" phone number"
+                      id="phone number"
                       type="text"
-                      name=" phone_number"
+                      name="phone_number"
                       value={values?.phone_number}
                       state={errors?.phone_number && "error"}
                       onChange={(e) => handleOnChange(e)}
@@ -237,9 +238,9 @@ function UserOrganizationForm({ setModal }) {
                     <InputField
                       variant="auth"
                       extra="mb-3"
-                      label=" Upload Picture*"
+                      label="Upload Picture*"
                       placeholder="upload picture"
-                      id=" picture"
+                      id="picture"
                       type="file"
                       name="picture"
                       onChange={(e) => handleOnChange(e)}
@@ -257,10 +258,10 @@ function UserOrganizationForm({ setModal }) {
                     <InputField
                       variant="auth"
                       extra="mb-3"
-                      label=" Parent Organization*"
-                      id=" parentorganization"
+                      label="Parent Organization*"
+                      id="parentorganization"
                       type="text"
-                      name=" organizationid"
+                      name="organizationid"
                       value={values?.organizationid}
                       state={errors?.organizationid && "error"}
                       onChange={(e) => handleOnChange(e)}
