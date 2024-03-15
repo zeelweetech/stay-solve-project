@@ -1,9 +1,9 @@
 import axios from "axios";
 
-export async function AddOrganization(body) {
+export async function AddLocation(body) {
   try {
     const response = await axios.post(
-      `${process.env.REACT_APP_LOCAL_URL}/add/organization`,
+      `${process.env.REACT_APP_LOCAL_URL}/add/location`,
       body,
       {
         headers: {
@@ -17,7 +17,7 @@ export async function AddOrganization(body) {
   }
 }
 
-export async function GetOrganization({
+export async function GetLocation({
   currentPage: currentPage,
   search: search,
 }) {
@@ -25,8 +25,8 @@ export async function GetOrganization({
     if (currentPage) {
       const response = await axios.get(
         search
-          ? `${process.env.REACT_APP_LOCAL_URL}/organizationlist/get?page=${currentPage}&pageSize=10&search=${search}`
-          : `${process.env.REACT_APP_LOCAL_URL}/organizationlist/get?page=${currentPage}&pageSize=10`,
+          ? `${process.env.REACT_APP_LOCAL_URL}/locationlist/get?page=${currentPage}&pageSize=10&search=${search}`
+          : `${process.env.REACT_APP_LOCAL_URL}/locationlist/get?page=${currentPage}&pageSize=10`,
         {
           headers: {
             Authorization: localStorage.getItem("token"),
@@ -36,7 +36,7 @@ export async function GetOrganization({
       return response.data;
     } else {
       const response = await axios.get(
-        `${process.env.REACT_APP_LOCAL_URL}/organizationlist/get`,
+        `${process.env.REACT_APP_LOCAL_URL}/locationlist/get`,
         {
           headers: {
             Authorization: localStorage.getItem("token"),
@@ -50,11 +50,10 @@ export async function GetOrganization({
   }
 }
 
-export async function AddOrganizationUser(body) {
+export async function GetLocationUser(currentPage) {
   try {
-    const response = await axios.post(
-      `${process.env.REACT_APP_LOCAL_URL}/add/organization/user`,
-      body,
+    const response = await axios.get(
+      `${process.env.REACT_APP_LOCAL_URL}/get/location/users?page=${currentPage}&pageSize=10`,
       {
         headers: {
           Authorization: localStorage.getItem("token"),
@@ -67,10 +66,11 @@ export async function AddOrganizationUser(body) {
   }
 }
 
-export async function GetOrganizationUser(currentPage) {
+export async function AddLocationUser(body) {
   try {
-    const response = await axios.get(
-      `${process.env.REACT_APP_LOCAL_URL}/get/organization/users?page=${currentPage}&pageSize=10`,
+    const response = await axios.post(
+      `${process.env.REACT_APP_LOCAL_URL}/add/location/user`,
+      body,
       {
         headers: {
           Authorization: localStorage.getItem("token"),

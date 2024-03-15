@@ -1,7 +1,7 @@
 import React from "react";
 import { Oval } from "react-loader-spinner";
 
-function index({ height, width }) {
+function Loader({ height, width }) {
   return (
     <div>
       <Oval
@@ -20,4 +20,4 @@ function index({ height, width }) {
   );
 }
 
-export default index;
+export default Loader;

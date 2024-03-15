@@ -1,10 +1,50 @@
 import Card from "components/card";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MdBarChart } from "react-icons/md";
 import OrganizationForm from "./Form/OrganizationForm";
+import { GetOrganization } from "Api/OrganizationApi";
+import OrganizationTable from "./Table/OrganizationTable";
+import SearchIcon from "components/icons/SearchIcon";
 
-function Index() {
+function Organization() {
   const [modal, setModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [organization, setOrganization] = useState();
+  const [count, setCount] = useState();
+  const [loading, setLoading] = useState(false);
+  const [openUserData, setOpenUserData] = useState(false);
+  const [searchItem, setSearchItem] = useState("");
+  const [selectedId, setSelectedId] = useState("");
+  const [selectedData, setSelectedData] = useState();
+
+  useEffect(() => {
+    OrganizationList();
+  }, [organization === undefined ? organization : "", currentPage]);
+
+  const OrganizationList = async (searchTerm) => {
+    setLoading(true);
+    await GetOrganization(
+      searchTerm
+        ? { currentPage: currentPage, search: searchTerm }
+        : { currentPage: currentPage }
+    )
+      .then((res) => {
+        console.log("res", res);
+        setOrganization(res?.orgData);
+        setCount(res?.totalDocument === 0 ? 1 : res?.totalDocument);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log("err", err);
+        setLoading(false);
+      });
+  };
+
+  const handleInputChange = (e) => {
+    const searchTerm = e.target.value;
+    setSearchItem(searchTerm);
+    OrganizationList(searchTerm);
+  };
 
   const handleModalOnclick = () => {
     setModal(true);
@@ -24,22 +64,8 @@ function Index() {
                   Search
                 </label>
                 <div class="relative">
-                  <div class="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3">
-                    <svg
-                      class="h-4 w-4 text-gray-500 dark:text-gray-400"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                      />
-                    </svg>
+                  <div class="pointer-events-none absolute inset-y-0 start-0 flex items-center">
+                    <SearchIcon />
                   </div>
                   <input
                     type="search"
@@ -47,6 +73,8 @@ function Index() {
                     class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-4 ps-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                     placeholder="Search Organization..."
                     required
+                    value={searchItem}
+                    onChange={handleInputChange}
                   />
                 </div>
               </form>
@@ -58,11 +86,28 @@ function Index() {
               ADD ORGANIZATION
             </button>
           </div>
+          <div className="mt-10">
+            <OrganizationTable
+              organization={organization}
+              count={count}
+              loading={loading}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+              setOpenUserData={setOpenUserData}
+              setSelectedId={setSelectedId}
+              setSelectedData={setSelectedData}
+            />
+          </div>
         </Card>
       )}
-      {modal && <OrganizationForm setModal={setModal} />}
+      {modal && (
+        <OrganizationForm
+          setModal={setModal}
+          OrganizationList={OrganizationList}
+        />
+      )}
     </div>
   );
 }
 
-export default Index;
+export default Organization;
