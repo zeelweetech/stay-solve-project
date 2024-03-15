@@ -68,8 +68,26 @@ export default function SignIn() {
           const decoded = jwtDecode(res?.accessToken);
           setCookie("token", res?.accessToken, 24);
           localStorage.setItem("token", res?.accessToken);
-          localStorage.setItem("role", decoded?.role);
-          localStorage.setItem("usernameOrEmail", decoded?.usernameOrEmail);
+          if (decoded?.role === "superadmin") {
+            localStorage.setItem("role", decoded?.role);
+            localStorage.setItem("usernameOrEmail", decoded?.usernameOrEmail);
+          } else if (decoded?.role === "organizationuser") {
+            localStorage.setItem("role", decoded?.role);
+            localStorage.setItem("usernameOrEmail", decoded?.usernameOrEmail);
+            localStorage.setItem("is_verified", decoded?.is_verified);
+            localStorage.setItem("organizationid", decoded?.organizationid);
+            localStorage.setItem(
+              "organizationuserid",
+              decoded?.organizationuserid
+            );
+          } else if (decoded?.role === "locationuser") {
+            localStorage.setItem("role", decoded?.role);
+            localStorage.setItem("usernameOrEmail", decoded?.usernameOrEmail);
+            localStorage.setItem("is_verified", decoded?.is_verified);
+            localStorage.setItem("locationid", decoded?.locationid);
+            localStorage.setItem("locationuserid", decoded?.locationuserid);
+            localStorage.setItem("organizationid", decoded?.organizationid);
+          }
           if (localStorage.getItem("token") && localStorage.getItem("role")) {
             navigate("/dashboard");
           }
