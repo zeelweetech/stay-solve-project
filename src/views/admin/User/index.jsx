@@ -60,7 +60,7 @@ function Index() {
              </div>
            </form>
          </h2>
-         <button className="!linear text-dark-500 z-[1] flex items-center justify-center rounded-lg bg-lightPrimary p-2 font-semibold !transition !duration-200 hover:bg-gray-100 active:bg-gray-200 dark:bg-navy-700 dark:text-white dark:hover:bg-white/20 dark:active:bg-white/10"  onClick={()=>handleModalOnclick()}>
+         <button className="!linear  bg-indigo-600 text-white z-[1] flex items-center justify-center rounded-lg p-2 font-semibold !transition !duration-200 hover:bg-indigo-500  focus-visible:outline-indigo-600"  onClick={()=>handleModalOnclick()}>
            ADD ORGANIZATION USER
          </button>
        </div>
@@ -107,7 +107,7 @@ function Index() {
              </div>
            </form>
          </h2>
-         <button className="!linear text-dark-500 z-[1] flex items-center justify-center rounded-lg bg-lightPrimary p-2 font-semibold !transition !duration-200 hover:bg-gray-100 active:bg-gray-200 dark:bg-navy-700 dark:text-white dark:hover:bg-white/20 dark:active:bg-white/10"  onClick={()=>handleModalOnclickLocationUSer()}>
+         <button className="!linear  bg-indigo-600 text-white z-[1] flex items-center justify-center rounded-lg p-2 font-semibold !transition !duration-200 hover:bg-indigo-500  focus-visible:outline-indigo-600"  onClick={()=>handleModalOnclickLocationUSer()}>
            ADD LOCATION USER
          </button>
        </div>

@@ -3,21 +3,14 @@ import InputField from "components/fields/InputField";
 import React, { useState } from "react";
 import { MdClose } from "react-icons/md";
 
-function UserLocationForm({ setLocationModal }) {
+function OrgUserOrganizationForm({ setModal }) {
   const [values, setValues] = useState({});
   const [errors, setErrors] = useState({});
 
   const handleOnChange = (e) => {
     const { value, name } = e.target;
-    setValues((prevValues) => ({
-      ...prevValues,
-      [name]: value,
-    }));
-
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      [name]: "",
-    }));
+    setValues({ ...values, [name]: value });
+    setErrors({ ...errors, [name]: '' });
 
     console.log("Updated values:", { ...values, [name]: value });
   };
@@ -25,9 +18,13 @@ function UserLocationForm({ setLocationModal }) {
   const validation = () => {
     const newErrors = {};
 
-    if (!values?.name) {
-      newErrors.name = "Please enter your name";
+    if (!values?.firstname) {
+      newErrors.firstname = "Please enter your first name";
     }
+
+    if (!values?.lastname) {
+        newErrors.lastname = "Please enter your last name";
+      }
 
     if (!values?.username) {
       newErrors.username = "Please enter your useName";
@@ -45,36 +42,17 @@ function UserLocationForm({ setLocationModal }) {
       newErrors.email = "Please enter your valid email";
     }
 
-    // if (!values?.address_line1) {
-    //   newErrors.address_line1 = "Please enter your address";
-    // }
-
-    // if (!values?.address_line2) {
-    //   newErrors.address_line2 = "error";
-    // }
-
-    // if (!values?.city) {
-    //   newErrors.city = "Please enter your city";
-    // }
-
-    // if (!values?.state) {
-    //   newErrors.state = "Please enter your state";
-    // }
+   
 
     if (!values?.picture) {
       newErrors.picture = "Please upload your picture";
     }
 
-    if (!values?.locationid) {
-      newErrors.locationid = "Please enter your parentlocation";
+    if (!values?.organizationid) {
+      newErrors.organizationid = "Please enter your parentorganization";
     }
 
-    // if (!values?.zip_code) {
-    //   newErrors.zip_code = "Please enter your zipcode";
-    // } else if (!/^\d{6}$/.test(values?.zip_code)) {
-    //   newErrors.zip_code = "Please enter your valid zipcode";
-    // }
-
+   
     // if (editData?.organizationid) {
     // } else {
     var lowerCase = /[a-z]/g;
@@ -97,6 +75,13 @@ function UserLocationForm({ setLocationModal }) {
     }
     // }
 
+
+    if (!values.confirmPassword) {
+        newErrors.confirmPassword = "Please confirm your password";
+      } else if (values.confirmPassword !== values.password) {
+        newErrors.confirmPassword = "Passwords do not match";
+      }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -110,7 +95,7 @@ function UserLocationForm({ setLocationModal }) {
   };
 
   const handleClose = () => {
-    setLocationModal(false);
+    setModal(false);
   };
 
   console.log("errors", errors);
@@ -134,18 +119,18 @@ function UserLocationForm({ setLocationModal }) {
                     <InputField
                       variant="auth"
                       extra="mb-3"
-                      label="Name*"
-                      placeholder=" Enter Your Name"
-                      id="name"
+                      label="Firstname*"
+                      placeholder="Enter Your First Name"
+                      id="firstname"
                       type="text"
-                      name="name"
-                      value={values?.name}
-                      state={errors?.name && "error"}
+                      name="firstname"
+                      value={values?.firstname}
+                      state={errors?.firstname && "error"}
                       onChange={(e) => handleOnChange(e)}
                     />
 
-                    {errors?.name && (
-                      <p className="text-xs text-red-500">{errors?.name}</p>
+                    {errors?.firstname && (
+                      <p className="text-xs text-red-500">{errors?.firstname}</p>
                     )}
                   </div>
                 </div>
@@ -155,8 +140,29 @@ function UserLocationForm({ setLocationModal }) {
                     <InputField
                       variant="auth"
                       extra="mb-3"
-                      label=" Username*"
-                      placeholder=" Enter Your Username"
+                      label="Lastname*"
+                      placeholder="Enter Your Last Name"
+                      id="lastname"
+                      type="text"
+                      name="lastname"
+                      value={values?.lastname}
+                      state={errors?.lastname && "error"}
+                      onChange={(e) => handleOnChange(e)}
+                    />
+
+                    {errors?.lastname && (
+                      <p className="text-xs text-red-500">{errors?.lastname}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div class="sm:col-span-3">
+                  <div class="mt-2">
+                    <InputField
+                      variant="auth"
+                      extra="mb-3"
+                      label="Username*"
+                      placeholder="Enter Your Username"
                       id="username"
                       type="text"
                       name="username"
@@ -191,26 +197,6 @@ function UserLocationForm({ setLocationModal }) {
                   </div>
                 </div>
 
-
-                <div class="sm:col-span-3">
-                  <InputField
-                    variant="auth"
-                    extra="mb-3"
-                    label="Password*"
-                    placeholder="Password"
-                    id="password"
-                    type="password"
-                    name="password"
-                    value={values?.password}
-                    state={errors?.password && "error"}
-                    onChange={(e) => handleOnChange(e)}
-                  />
-
-                  {errors?.password && (
-                    <p className="text-xs text-red-500">{errors?.password}</p>
-                  )}
-                </div>
-
                 <div class="sm:col-span-3">
                   <div class="mt-2">
                     <InputField
@@ -235,11 +221,52 @@ function UserLocationForm({ setLocationModal }) {
                 </div>
 
                 <div class="sm:col-span-3">
+                  <InputField
+                    variant="auth"
+                    extra="mb-3"
+                    label="Password*"
+                    placeholder="Password"
+                    id="password"
+                    type="password"
+                    name="password"
+                    value={values?.password}
+                    state={errors?.password && "error"}
+                    onChange={(e) => handleOnChange(e)}
+                  />
+
+                  {errors?.password && (
+                    <p className="text-xs text-red-500">{errors?.password}</p>
+                  )}
+                </div>
+
+               
+
+                <div class="sm:col-span-3">
+                  <InputField
+                    variant="auth"
+                    extra="mb-3"
+                    label="Confirm Password*"
+                    placeholder="Confirm Password"
+                    id="confirmPassword"
+                    type="password"
+                    name="confirmPassword"
+                    value={values?.confirmPassword}
+                    state={errors?.confirmPassword && "error"}
+                    onChange={(e) => handleOnChange(e)}
+                  />
+
+                  {errors?.confirmPassword && (
+                    <p className="text-xs text-red-500">{errors?.confirmPassword}</p>
+                  )}
+                </div>
+
+
+                <div class="sm:col-span-3">
                   <div class="mt-2">
                     <InputField
                       variant="auth"
                       extra="mb-3"
-                      label=" Upload Picture*"
+                      label="Upload Picture*"
                       placeholder="upload picture"
                       id="picture"
                       type="file"
@@ -254,27 +281,7 @@ function UserLocationForm({ setLocationModal }) {
                   </div>
                 </div>
 
-                <div class="sm:col-span-3">
-                  <div class="mt-2">
-                    <InputField
-                      variant="auth"
-                      extra="mb-3"
-                      label="Parent Location*"
-                      id="parentlocation"
-                      type="text"
-                      name="locationid"
-                      value={values?.locationid}
-                      state={errors?.locationid && "error"}
-                      onChange={(e) => handleOnChange(e)}
-                    />
-
-                    {errors?.locationid && (
-                      <p className="text-xs text-red-500">
-                        {errors?.locationid}
-                      </p>
-                    )}
-                  </div>
-                </div>
+               
               </div>
             </div>
           </div>
@@ -294,4 +301,4 @@ function UserLocationForm({ setLocationModal }) {
   );
 }
 
-export default UserLocationForm;
+export default OrgUserOrganizationForm;

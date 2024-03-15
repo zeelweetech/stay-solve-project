@@ -120,7 +120,7 @@ function UserOrganizationForm({ setModal }) {
       <Card extra="flex flex-col bg-white w-full rounded-3xl py-6 px-2  mt-8">
         <div className="flex justify-end">
           <MdClose
-            className="cursor-pointer text-gray-600 hover:text-gray-800"
+            className="cursor-pointer text-gray-600"
             size={24}
             onClick={handleClose}
           />

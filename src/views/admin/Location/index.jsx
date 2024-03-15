@@ -1,7 +1,8 @@
 import Card from "components/card";
 import React, { useState } from "react";
 import { MdBarChart } from "react-icons/md";
-import OrganizationForm from "./Form/LocationForm";
+
+import LocationForm from "./Form/LocationForm";
 
 function Index() {
 
@@ -54,13 +55,13 @@ function Index() {
              </div>
            </form>
          </h2>
-         <button className="!linear text-dark-500 z-[1] flex items-center justify-center rounded-lg bg-lightPrimary p-2 font-semibold !transition !duration-200 hover:bg-gray-100 active:bg-gray-200 dark:bg-navy-700 dark:text-white dark:hover:bg-white/20 dark:active:bg-white/10"  onClick={()=>handleModalOnclick()}>
+         <button className="!linear  bg-indigo-600 text-white z-[1] flex items-center justify-center rounded-lg p-2 font-semibold !transition !duration-200 hover:bg-indigo-500  focus-visible:outline-indigo-600"  onClick={()=>handleModalOnclick()}>
            ADD LOCATION
          </button>
        </div>
        </Card>
      )}
-        { modal && <OrganizationForm  setModal={setModal}/>}
+        { modal && <LocationForm  setModal={setModal}/>}
      
     </div>
   );
