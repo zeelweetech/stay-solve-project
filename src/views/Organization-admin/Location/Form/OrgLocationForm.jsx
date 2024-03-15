@@ -1,26 +1,18 @@
-import { AddOrganization } from "Api/OrganizationApi";
-import Loader from "components/Loader";
 import Card from "components/card";
 import InputField from "components/fields/InputField";
 import React, { useState } from "react";
-import toast from "react-hot-toast";
 import { MdClose } from "react-icons/md";
 
-function OrganizationForm({ setModal, OrganizationList }) {
+function OrgLocationForm({ setModal }) {
   const [values, setValues] = useState({});
   const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false);
 
   const handleOnChange = (e) => {
     const { value, name } = e.target;
-    setValues({
-      ...values,
-      [name]: value,
-    });
-    setErrors({
-      ...errors,
-      [name]: "",
-    });
+    setValues({ ...values, [name]: value });
+    setErrors({ ...errors, [name]: '' });
+
+    console.log("Updated values:", { ...values, [name]: value });
   };
 
   const validation = () => {
@@ -31,13 +23,13 @@ function OrganizationForm({ setModal, OrganizationList }) {
     }
 
     if (!values?.username) {
-      newErrors.username = "Please enter your usename";
+      newErrors.username = "Please enter your useName";
     }
 
     if (!values?.phone_number) {
-      newErrors.phone_number = "Please enter your phonenumber";
+      newErrors.phone_number = "Please enter your phone number";
     } else if (!/^\d{10}$/.test(values?.phone_number)) {
-      newErrors.phone_number = "Please enter your valid phonenumber";
+      newErrors.phone_number = "Please enter your valid phone number";
     }
 
     if (!values?.email) {
@@ -50,6 +42,10 @@ function OrganizationForm({ setModal, OrganizationList }) {
       newErrors.address_line1 = "Please enter your address";
     }
 
+    // if (!values?.address_line2) {
+    //   newErrors.address_line2 = "error";
+    // }
+
     if (!values?.city) {
       newErrors.city = "Please enter your city";
     }
@@ -58,12 +54,18 @@ function OrganizationForm({ setModal, OrganizationList }) {
       newErrors.state = "Please enter your state";
     }
 
+    if (!values?.organizationid) {
+      newErrors.organizationid = "Please enter your parentorganization";
+    }
+
     if (!values?.zip_code) {
       newErrors.zip_code = "Please enter your zipcode";
-    } else if (!/^\d{5}$/.test(values?.zip_code)) {
+    } else if (!/^\d{6}$/.test(values?.zip_code)) {
       newErrors.zip_code = "Please enter your valid zipcode";
     }
 
+    // if (editData?.organizationid) {
+    // } else {
     var lowerCase = /[a-z]/g;
     var upperCase = /[A-Z]/g;
     var numbers = /[0-9]/g;
@@ -74,76 +76,33 @@ function OrganizationForm({ setModal, OrganizationList }) {
     } else if (!values?.password?.match(lowerCase)) {
       newErrors.password = "Password should contains lowercase";
     } else if (!values?.password?.match(upperCase)) {
-      newErrors.password = "Password should contains uppercase";
+      newErrors.password = "Password should contains upperCase";
     } else if (!values?.password?.match(numbers)) {
       newErrors.password = "Password should contains numbers";
     } else if (values?.password?.length < 8) {
       newErrors.password = "Password should be more than 8 ";
     } else if (!values?.password.match(specialChar)) {
-      newErrors.password = "Password should contains specialchar";
+      newErrors.password = "Password should contains specialChar";
     }
-
-    if (!values?.confirmPassword) {
-      newErrors.confirmPassword = "Please confirm your password";
-    } else if (values?.confirmPassword !== values?.password) {
-      newErrors.confirmPassword = "Confirm password do not match";
-    }
+    // }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleOnSubmit = async (e) => {
+  const handleOnSubmit = (e) => {
     e.preventDefault();
+
     if (validation()) {
-      const body = {
-        name: values?.name,
-        username: values?.username,
-        phone_number: "+1" + values?.phone_number,
-        email: values?.email,
-        password: values?.password,
-        confirmPassword: values?.confirmPassword,
-        address_line1: values?.address_line1,
-        address_line2: values?.address_line2,
-        state: values?.state,
-        city: values?.city,
-        zip_code: values?.zip_code,
-        notes: values?.notes,
-      };
-      setLoading(true);
-      await AddOrganization(body)
-        .then((res) => {
-          console.log("res", res);
-          toast.success(res?.message);
-          setValues({
-            name: "",
-            username: "",
-            phone_number: "",
-            email: "",
-            password: "",
-            confirmPassword: "",
-            address_line1: "",
-            address_line2: "",
-            city: "",
-            state: "",
-            zip_code: "",
-            notes: "",
-          });
-          OrganizationList();
-          setModal(false);
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.log("err", err);
-          toast.error(err?.response?.data?.error);
-          setLoading(false);
-        });
+      console.log("done$$$");
     }
   };
 
   const handleClose = () => {
     setModal(false);
   };
+
+  console.log("errors", errors);
 
   return (
     <div>
@@ -156,22 +115,22 @@ function OrganizationForm({ setModal, OrganizationList }) {
           />
         </div>
         <form className="p-5">
-          <div className="space-y-12">
-            <div className="border-b border-gray-900/10 pb-12">
-              <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                <div className="sm:col-span-3">
-                  <div className="mt-2">
+          <div class="space-y-12">
+            <div class="border-b border-gray-900/10 pb-12">
+              <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                <div class="sm:col-span-3">
+                  <div class="mt-2">
                     <InputField
                       variant="auth"
                       extra="mb-3"
-                      label="Name*"
-                      placeholder="Enter Your Name"
-                      onChange={(e) => handleOnChange(e)}
+                      label="  Name*"
+                      placeholder=" Enter Your Name"
                       id="name"
                       type="text"
                       name="name"
                       value={values?.name}
                       state={errors?.name && "error"}
+                      onChange={(e) => handleOnChange(e)}
                     />
 
                     {errors?.name && (
@@ -180,19 +139,19 @@ function OrganizationForm({ setModal, OrganizationList }) {
                   </div>
                 </div>
 
-                <div className="sm:col-span-3">
-                  <div className="mt-2">
+                <div class="sm:col-span-3">
+                  <div class="mt-2">
                     <InputField
                       variant="auth"
                       extra="mb-3"
                       label="Username*"
                       placeholder=" Enter Your Username"
-                      onChange={(e) => handleOnChange(e)}
                       id="username"
                       type="text"
                       name="username"
                       value={values?.username}
                       state={errors?.username && "error"}
+                      onChange={(e) => handleOnChange(e)}
                     />
                     {errors?.username && (
                       <p className="text-xs text-red-500">{errors?.username}</p>
@@ -200,13 +159,13 @@ function OrganizationForm({ setModal, OrganizationList }) {
                   </div>
                 </div>
 
-                <div className="sm:col-span-3">
-                  <div className="mt-2">
+                <div class="sm:col-span-3">
+                  <div class="mt-2">
                     <InputField
                       variant="auth"
                       extra="mb-3"
                       label="Email*"
-                      placeholder="Enter Your Email"
+                      placeholder=" Enter Your Email"
                       onChange={(e) => handleOnChange(e)}
                       id="email"
                       type="text"
@@ -221,41 +180,18 @@ function OrganizationForm({ setModal, OrganizationList }) {
                   </div>
                 </div>
 
-                <div className="sm:col-span-3">
-                  <div className="mt-2">
-                    <InputField
-                      variant="auth"
-                      extra="mb-3"
-                      label="Phone Number*"
-                      placeholder="Enter Your phone number"
-                      onChange={(e) => handleOnChange(e)}
-                      id="phone number"
-                      type="text"
-                      name="phone_number"
-                      value={values?.phone_number}
-                      state={errors?.phone_number && "error"}
-                    />
-
-                    {errors?.phone_number && (
-                      <p className="text-xs text-red-500">
-                        {errors?.phone_number}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="sm:col-span-3">
+                <div class="sm:col-span-3">
                   <InputField
                     variant="auth"
                     extra="mb-3"
                     label="Password*"
                     placeholder="Password"
-                    onChange={(e) => handleOnChange(e)}
                     id="password"
                     type="password"
                     name="password"
                     value={values?.password}
                     state={errors?.password && "error"}
+                    onChange={(e) => handleOnChange(e)}
                   />
 
                   {errors?.password && (
@@ -264,39 +200,18 @@ function OrganizationForm({ setModal, OrganizationList }) {
                 </div>
 
                 <div class="sm:col-span-3">
-                  <InputField
-                    variant="auth"
-                    extra="mb-3"
-                    label="Confirm Password*"
-                    placeholder="Confirm Password"
-                    id="password"
-                    type="password"
-                    name="confirmPassword"
-                    value={values?.confirmPassword}
-                    state={errors?.confirmPassword && "error"}
-                    onChange={(e) => handleOnChange(e)}
-                  />
-
-                  {errors?.confirmPassword && (
-                    <p className="text-xs text-red-500">
-                      {errors?.confirmPassword}
-                    </p>
-                  )}
-                </div>
-
-                <div className="sm:col-span-3">
-                  <div className="mt-2">
+                  <div class="mt-2">
                     <InputField
                       variant="auth"
                       extra="mb-3"
-                      label="Address Line 1*"
+                      label=" Address Line 1*"
                       placeholder="Enter Your Address 1"
-                      onChange={(e) => handleOnChange(e)}
                       id="addressline1"
                       type="text"
                       name="address_line1"
                       value={values?.address_line1}
                       state={errors?.address_line1 && "error"}
+                      onChange={(e) => handleOnChange(e)}
                     />
 
                     {errors?.address_line1 && (
@@ -307,35 +222,35 @@ function OrganizationForm({ setModal, OrganizationList }) {
                   </div>
                 </div>
 
-                <div className="sm:col-span-3">
-                  <div className="mt-2">
+                <div class="sm:col-span-3">
+                  <div class="mt-2">
                     <InputField
                       variant="auth"
                       extra="mb-3"
-                      label="Address Line 2"
+                      label=" Address Line 2*"
                       placeholder="Enter Your Address 2"
-                      onChange={(e) => handleOnChange(e)}
                       id="addressline2"
                       type="text"
                       name="address_line2"
                       value={values?.address_line2}
+                      onChange={(e) => handleOnChange(e)}
                     />
                   </div>
                 </div>
 
-                <div className="sm:col-span-2 sm:col-start-1">
-                  <div className="mt-2">
+                <div class="sm:col-span-2 sm:col-start-1">
+                  <div class="mt-2">
                     <InputField
                       variant="auth"
                       extra="mb-3"
                       label="City*"
                       placeholder="Enter Your City"
-                      onChange={(e) => handleOnChange(e)}
                       id="city"
                       type="text"
                       name="city"
                       value={values?.city}
                       state={errors?.city && "error"}
+                      onChange={(e) => handleOnChange(e)}
                     />
 
                     {errors?.city && (
@@ -344,19 +259,19 @@ function OrganizationForm({ setModal, OrganizationList }) {
                   </div>
                 </div>
 
-                <div className="sm:col-span-2">
-                  <div className="mt-2">
+                <div class="sm:col-span-2">
+                  <div class="mt-2">
                     <InputField
                       variant="auth"
                       extra="mb-3"
-                      label="State*"
+                      label=" State*"
                       placeholder="Enter Your State"
-                      onChange={(e) => handleOnChange(e)}
                       id="state"
                       type="text"
                       name="state"
                       value={values?.state}
                       state={errors?.state && "error"}
+                      onChange={(e) => handleOnChange(e)}
                     />
 
                     {errors?.state && (
@@ -365,19 +280,19 @@ function OrganizationForm({ setModal, OrganizationList }) {
                   </div>
                 </div>
 
-                <div className="sm:col-span-2">
-                  <div className="mt-2">
+                <div class="sm:col-span-2">
+                  <div class="mt-2">
                     <InputField
                       variant="auth"
                       extra="mb-3"
                       label="Zip/Post code*"
                       placeholder="Enter Your zipcode"
-                      onChange={(e) => handleOnChange(e)}
                       id="zipcode"
                       type="text"
                       name="zip_code"
                       value={values?.zip_code}
                       state={errors?.zip_code && "error"}
+                      onChange={(e) => handleOnChange(e)}
                     />
 
                     {errors?.zip_code && (
@@ -386,33 +301,58 @@ function OrganizationForm({ setModal, OrganizationList }) {
                   </div>
                 </div>
 
-                <div className="sm:col-span-3">
-                  <div className="mt-2">
+                <div class="sm:col-span-3">
+                  <div class="mt-2">
                     <InputField
                       variant="auth"
                       extra="mb-3"
-                      label="Notes"
-                      placeholder="Enter Notes"
+                      label="Phone Number*"
+                      placeholder="Enter Your phone number"
+                      id="phone number"
+                      type="text"
+                      name="phone_number"
+                      value={values?.phone_number}
+                      state={errors?.phone_number && "error"}
                       onChange={(e) => handleOnChange(e)}
+                    />
+
+                    {errors?.phone_number && (
+                      <p className="text-xs text-red-500">
+                        {errors?.phone_number}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div class="sm:col-span-3">
+                  <div class="mt-2">
+                    <InputField
+                      variant="auth"
+                      extra="mb-3"
+                      label="Notes*"
+                      placeholder="Enter Notes"
                       id="addresnotesslincitye2"
                       type="text"
                       name="notes"
-                      value={values?.notes}
+                      onChange={(e) => handleOnChange(e)}
                     />
+
+                    {errors?.notes && (
+                      <p className="text-xs text-red-500">{errors?.notes}</p>
+                    )}
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="mt-6 flex items-center justify-center gap-x-6">
+          <div class="mt-6 flex items-center justify-center gap-x-6">
             <button
               type="submit"
-              className="flex rounded-md bg-indigo-600 px-10 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              class="rounded-md bg-indigo-600 px-10 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               onClick={(e) => handleOnSubmit(e)}
             >
               Submit
-              {loading && <Loader height={25} width={25} />}
             </button>
           </div>
         </form>
@@ -421,4 +361,4 @@ function OrganizationForm({ setModal, OrganizationList }) {
   );
 }
 
-export default OrganizationForm;
+export default OrgLocationForm;

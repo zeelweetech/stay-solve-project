@@ -1,57 +1,16 @@
-import { AddLocationUser } from "Api/LocationApi";
-import { GetLocation } from "Api/LocationApi";
-import { AddVerifyEmail } from "Api/authApi";
-import Loader from "components/Loader";
-import Select from "components/Select";
 import Card from "components/card";
 import InputField from "components/fields/InputField";
-import React, { useEffect, useState } from "react";
-import toast from "react-hot-toast";
+import React, { useState } from "react";
 import { MdClose } from "react-icons/md";
-import CryptoJS from "crypto-js";
 
-function UserLocationForm({ setLocationModal, LocationUserList, secretKey }) {
+function OrgUserLocationForm({ setLocationModal }) {
   const [values, setValues] = useState({});
   const [errors, setErrors] = useState({});
-  const [locationList, setLocationList] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    locationUserData();
-  }, []);
-
-  // useEffect(() => {
-  //   locationUserData();
-  // }, [!selectedId]);
-
-  const locationUserData = async () => {
-    await GetLocation({ currentPage: "", search: "" })
-      .then((res) => {
-        setLocationList(res?.responseDataArray);
-      })
-      .catch((err) => {
-        console.log("err", err);
-      });
-  };
 
   const handleOnChange = (e) => {
-    const { value, name, files } = e.target;
-    if (name === "picture") {
-      setValues({
-        ...values,
-        [name]: files[0],
-      });
-    } else {
-      setValues({
-        ...values,
-        [name]: value,
-      });
-    }
-
-    setErrors({
-      ...errors,
-      [name]: "",
-    });
+    const { value, name } = e.target;
+    setValues({ ...values, [name]: value });
+    setErrors({ ...errors, [name]: "" });
 
     console.log("Updated values:", { ...values, [name]: value });
   };
@@ -60,21 +19,21 @@ function UserLocationForm({ setLocationModal, LocationUserList, secretKey }) {
     const newErrors = {};
 
     if (!values?.firstname) {
-      newErrors.firstname = "Please enter your name";
+      newErrors.firstname = "Please enter your first name";
     }
 
     if (!values?.lastname) {
-      newErrors.lastname = "Please enter your name";
-    }
+        newErrors.lastname = "Please enter your last name";
+      }
 
     if (!values?.username) {
       newErrors.username = "Please enter your useName";
     }
 
-    if (!values?.mobile_number) {
-      newErrors.mobile_number = "Please enter your phone number";
-    } else if (!/^\d{10}$/.test(values?.mobile_number)) {
-      newErrors.mobile_number = "Please enter your valid phone number";
+    if (!values?.phone_number) {
+      newErrors.phone_number = "Please enter your phone number";
+    } else if (!/^\d{10}$/.test(values?.phone_number)) {
+      newErrors.phone_number = "Please enter your valid phone number";
     }
 
     if (!values?.email) {
@@ -82,6 +41,22 @@ function UserLocationForm({ setLocationModal, LocationUserList, secretKey }) {
     } else if (!/^\S+@\S+\.\S+$/.test(values?.email)) {
       newErrors.email = "Please enter your valid email";
     }
+
+    // if (!values?.address_line1) {
+    //   newErrors.address_line1 = "Please enter your address";
+    // }
+
+    // if (!values?.address_line2) {
+    //   newErrors.address_line2 = "error";
+    // }
+
+    // if (!values?.city) {
+    //   newErrors.city = "Please enter your city";
+    // }
+
+    // if (!values?.state) {
+    //   newErrors.state = "Please enter your state";
+    // }
 
     if (!values?.picture) {
       newErrors.picture = "Please upload your picture";
@@ -91,6 +66,14 @@ function UserLocationForm({ setLocationModal, LocationUserList, secretKey }) {
       newErrors.locationid = "Please enter your parentlocation";
     }
 
+    // if (!values?.zip_code) {
+    //   newErrors.zip_code = "Please enter your zipcode";
+    // } else if (!/^\d{6}$/.test(values?.zip_code)) {
+    //   newErrors.zip_code = "Please enter your valid zipcode";
+    // }
+
+    // if (editData?.organizationid) {
+    // } else {
     var lowerCase = /[a-z]/g;
     var upperCase = /[A-Z]/g;
     var numbers = /[0-9]/g;
@@ -109,81 +92,31 @@ function UserLocationForm({ setLocationModal, LocationUserList, secretKey }) {
     } else if (!values?.password.match(specialChar)) {
       newErrors.password = "Password should contains specialChar";
     }
+    // }
 
-    if (!values?.confirmPassword) {
+    if (!values.confirmPassword) {
       newErrors.confirmPassword = "Please confirm your password";
-    } else if (values?.confirmPassword !== values?.password) {
-      newErrors.confirmPassword = "Confirm password do not match";
+    } else if (values.confirmPassword !== values.password) {
+      newErrors.confirmPassword = "Passwords do not match";
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const encryptEmail = (email) => {
-    const encryptedEmail = CryptoJS.AES.encrypt(email, secretKey).toString();
-    return encryptedEmail;
-  };
-
-  const VerifyEmail = async (email) => {
-    const encryptedEmail = encryptEmail(email);
-    const body = {
-      email: encryptedEmail,
-      role: "locationuser",
-    };
-    await AddVerifyEmail(body)
-      .then((res) => {
-        toast.success(res?.message);
-      })
-      .catch((err) => {
-        console.log("err", err);
-      });
-  };
-
-  const handleOnSubmit = async (e) => {
+  const handleOnSubmit = (e) => {
     e.preventDefault();
-    if (validation()) {
-      setLoading(true);
-      var formdata = new FormData();
-      formdata.append("firstname", values?.firstname);
-      formdata.append("username", values?.username);
-      formdata.append("lastname", values?.lastname);
-      formdata.append("email", values?.email);
-      formdata.append("mobile_number", "+1" + values?.mobile_number);
-      formdata.append("password", values?.password);
-      formdata.append("confirmPassword", values?.confirmPassword);
-      formdata.append("locationid", values?.locationid);
-      formdata.append("picture", values?.picture);
 
-      await AddLocationUser(formdata)
-        .then((res) => {
-          toast.success(res?.message);
-          setValues({
-            firstname: "",
-            username: "",
-            lastname: "",
-            email: "",
-            phone: "",
-            password: "",
-            confirmPassword: "",
-            locationid: "",
-          });
-          VerifyEmail(values?.email);
-          LocationUserList();
-          setLoading(false);
-          setLocationModal(false);
-        })
-        .catch((err) => {
-          console.log("err", err);
-          toast.error(err?.response?.data?.error);
-          setLoading(false);
-        });
+    if (validation()) {
+      console.log("done$$$");
     }
   };
 
   const handleClose = () => {
     setLocationModal(false);
   };
+
+  console.log("errors", errors);
 
   return (
     <div>
@@ -205,8 +138,8 @@ function UserLocationForm({ setLocationModal, LocationUserList, secretKey }) {
                       variant="auth"
                       extra="mb-3"
                       label="First Name*"
-                      placeholder=" Enter Your Name"
-                      id="name"
+                      placeholder="Enter Your First Name"
+                      id="firstname"
                       type="text"
                       name="firstname"
                       value={values?.firstname}
@@ -215,9 +148,7 @@ function UserLocationForm({ setLocationModal, LocationUserList, secretKey }) {
                     />
 
                     {errors?.firstname && (
-                      <p className="text-xs text-red-500">
-                        {errors?.firstname}
-                      </p>
+                      <p className="text-xs text-red-500">{errors?.firstname}</p>
                     )}
                   </div>
                 </div>
@@ -228,8 +159,8 @@ function UserLocationForm({ setLocationModal, LocationUserList, secretKey }) {
                       variant="auth"
                       extra="mb-3"
                       label="Last Name*"
-                      placeholder=" Enter Your Name"
-                      id="name"
+                      placeholder="Enter Your Last Name"
+                      id="lastname"
                       type="text"
                       name="lastname"
                       value={values?.lastname}
@@ -248,8 +179,8 @@ function UserLocationForm({ setLocationModal, LocationUserList, secretKey }) {
                     <InputField
                       variant="auth"
                       extra="mb-3"
-                      label=" Username*"
-                      placeholder=" Enter Your Username"
+                      label="Username*"
+                      placeholder="Enter Your Username"
                       id="username"
                       type="text"
                       name="username"
@@ -285,6 +216,29 @@ function UserLocationForm({ setLocationModal, LocationUserList, secretKey }) {
                 </div>
 
                 <div class="sm:col-span-3">
+                  <div class="mt-2">
+                    <InputField
+                      variant="auth"
+                      extra="mb-3"
+                      label="Phone Number*"
+                      placeholder="Enter Your phone number"
+                      id="phone number"
+                      type="text"
+                      name="phone_number"
+                      value={values?.phone_number}
+                      state={errors?.phone_number && "error"}
+                      onChange={(e) => handleOnChange(e)}
+                    />
+
+                    {errors?.phone_number && (
+                      <p className="text-xs text-red-500">
+                        {errors?.phone_number}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div class="sm:col-span-3">
                   <InputField
                     variant="auth"
                     extra="mb-3"
@@ -309,7 +263,7 @@ function UserLocationForm({ setLocationModal, LocationUserList, secretKey }) {
                     extra="mb-3"
                     label="Confirm Password*"
                     placeholder="Confirm Password"
-                    id="password"
+                    id="confirmPassword"
                     type="password"
                     name="confirmPassword"
                     value={values?.confirmPassword}
@@ -329,36 +283,14 @@ function UserLocationForm({ setLocationModal, LocationUserList, secretKey }) {
                     <InputField
                       variant="auth"
                       extra="mb-3"
-                      label="Phone Number*"
-                      placeholder="Enter Your phone number"
-                      id="phone number"
-                      type="text"
-                      name="mobile_number"
-                      value={values?.mobile_number}
-                      state={errors?.mobile_number && "error"}
-                      onChange={(e) => handleOnChange(e)}
-                    />
-
-                    {errors?.mobile_number && (
-                      <p className="text-xs text-red-500">
-                        {errors?.mobile_number}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div class="sm:col-span-3">
-                  <div class="mt-2">
-                    <InputField
-                      variant="auth"
-                      extra="mb-3"
-                      label=" Upload Picture*"
+                      label="Upload Picture*"
                       placeholder="upload picture"
                       id="picture"
                       type="file"
                       name="picture"
                       onChange={(e) => handleOnChange(e)}
                       state={errors?.picture && "error"}
+                      style={{ backgroundColor: 'blue', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '5px', cursor: 'pointer' }}
                     />
 
                     {errors?.picture && (
@@ -369,7 +301,7 @@ function UserLocationForm({ setLocationModal, LocationUserList, secretKey }) {
 
                 <div class="sm:col-span-3">
                   <div class="mt-2">
-                    <Select
+                    <InputField
                       variant="auth"
                       extra="mb-3"
                       label="Parent Location*"
@@ -379,31 +311,12 @@ function UserLocationForm({ setLocationModal, LocationUserList, secretKey }) {
                       value={values?.locationid}
                       state={errors?.locationid && "error"}
                       onChange={(e) => handleOnChange(e)}
-                      options={locationList}
-                      valueKey={(option) => option?.data?.locationid}
-                      valueName={(option) => option?.data?.name}
                     />
 
                     {errors?.locationid && (
                       <p className="text-xs text-red-500">
                         {errors?.locationid}
                       </p>
-                    )}
-                  </div>
-                </div>
-
-                <div class="sm:col-span-3">
-                  <div class="mt-2">
-                    {values?.picture && (
-                      <img
-                        src={
-                          values?.picture
-                            ? URL.createObjectURL(values?.picture)
-                            : ""
-                        }
-                        alt="picture"
-                        style={{ width: 100, height: 100 }}
-                      />
                     )}
                   </div>
                 </div>
@@ -414,11 +327,10 @@ function UserLocationForm({ setLocationModal, LocationUserList, secretKey }) {
           <div class="mt-6 flex items-center justify-center gap-x-6">
             <button
               type="submit"
-              class="flex rounded-md bg-indigo-600 px-10 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              class="rounded-md bg-indigo-600 px-10 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               onClick={(e) => handleOnSubmit(e)}
             >
               Submit
-              {loading && <Loader height={25} width={25} />}
             </button>
           </div>
         </form>
@@ -427,4 +339,4 @@ function UserLocationForm({ setLocationModal, LocationUserList, secretKey }) {
   );
 }
 
-export default UserLocationForm;
+export default OrgUserLocationForm;
