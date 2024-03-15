@@ -10,17 +10,14 @@ function OrganizationForm({ setModal }) {
 
   const handleOnChange = (e) => {
     const { value, name } = e.target;
-    setValues((prevValues) => ({
-      ...prevValues,
+    setValues({
+      ...values,
       [name]: value,
-    }));
-
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      [name]: undefined,
-    }));
-
-    console.log("Updated values:", { ...values, [name]: value });
+    });
+    setErrors({
+      ...errors,
+      [name]: "",
+    });
   };
 
   const validation = () => {
@@ -96,7 +93,6 @@ function OrganizationForm({ setModal }) {
 
   const handleOnSubmit = async (e) => {
     e.preventDefault();
-
     if (validation()) {
       const body = {
         name: values?.name,
@@ -125,8 +121,6 @@ function OrganizationForm({ setModal }) {
     setModal(false);
   };
 
-  console.log("errors", errors);
-
   return (
     <div>
       <Card extra="flex flex-col bg-white w-full rounded-3xl py-6 px-2  mt-8">
@@ -146,14 +140,14 @@ function OrganizationForm({ setModal }) {
                     <InputField
                       variant="auth"
                       extra="mb-3"
-                      label="  Name*"
-                      placeholder=" Enter Your Name"
+                      label="Name*"
+                      placeholder="Enter Your Name"
                       onChange={(e) => handleOnChange(e)}
-                      id=" name"
+                      id="name"
                       type="text"
-                      name="  name"
+                      name="name"
                       value={values?.name}
-                      state={errors?.name && "error" }
+                      state={errors?.name && "error"}
                     />
 
                     {errors?.name && (
@@ -167,12 +161,12 @@ function OrganizationForm({ setModal }) {
                     <InputField
                       variant="auth"
                       extra="mb-3"
-                      label=" Username*"
+                      label="Username*"
                       placeholder=" Enter Your Username"
                       onChange={(e) => handleOnChange(e)}
-                      id=" username"
+                      id="username"
                       type="text"
-                      name=" username"
+                      name="username"
                       value={values?.username}
                       state={errors?.username && "error"}
                     />
@@ -188,7 +182,7 @@ function OrganizationForm({ setModal }) {
                       variant="auth"
                       extra="mb-3"
                       label="Email*"
-                      placeholder=" Enter Your Email"
+                      placeholder="Enter Your Email"
                       onChange={(e) => handleOnChange(e)}
                       id="email"
                       type="text"
@@ -227,12 +221,12 @@ function OrganizationForm({ setModal }) {
                     <InputField
                       variant="auth"
                       extra="mb-3"
-                      label=" Address Line 1*"
+                      label="Address Line 1*"
                       placeholder="Enter Your Address 1"
                       onChange={(e) => handleOnChange(e)}
-                      id=" addressline1"
+                      id="addressline1"
                       type="text"
-                      name=" address_line1"
+                      name="address_line1"
                       value={values?.address_line1}
                       state={errors?.address_line1 && "error"}
                     />
@@ -250,10 +244,10 @@ function OrganizationForm({ setModal }) {
                     <InputField
                       variant="auth"
                       extra="mb-3"
-                      label=" Address Line 2*"
+                      label="Address Line 2*"
                       placeholder="Enter Your Address 2"
                       onChange={(e) => handleOnChange(e)}
-                      id=" addressline2"
+                      id="addressline2"
                       type="text"
                       name="address_line2"
                       value={values?.address_line2}
@@ -287,12 +281,12 @@ function OrganizationForm({ setModal }) {
                     <InputField
                       variant="auth"
                       extra="mb-3"
-                      label=" City*"
+                      label="City*"
                       placeholder="Enter Your City"
                       onChange={(e) => handleOnChange(e)}
-                      id=" city"
+                      id="city"
                       type="text"
-                      name=" city"
+                      name="city"
                       value={values?.city}
                       state={errors?.city && "error"}
                     />
@@ -308,12 +302,12 @@ function OrganizationForm({ setModal }) {
                     <InputField
                       variant="auth"
                       extra="mb-3"
-                      label=" State*"
+                      label="State*"
                       placeholder="Enter Your State"
                       onChange={(e) => handleOnChange(e)}
-                      id=" state"
+                      id="state"
                       type="text"
-                      name=" state"
+                      name="state"
                       value={values?.state}
                       state={errors?.state && "error"}
                     />
@@ -329,12 +323,12 @@ function OrganizationForm({ setModal }) {
                     <InputField
                       variant="auth"
                       extra="mb-3"
-                      label=" Zip/Post code*"
+                      label="Zip/Post code*"
                       placeholder="Enter Your zipcode"
                       onChange={(e) => handleOnChange(e)}
-                      id=" zipcode"
+                      id="zipcode"
                       type="text"
-                      name=" zip_code"
+                      name="zip_code"
                       value={values?.zip_code}
                       state={errors?.zip_code && "error"}
                     />
@@ -350,12 +344,12 @@ function OrganizationForm({ setModal }) {
                     <InputField
                       variant="auth"
                       extra="mb-3"
-                      label=" Phone Number*"
+                      label="Phone Number*"
                       placeholder="Enter Your phone number"
                       onChange={(e) => handleOnChange(e)}
-                      id=" phone number"
+                      id="phone number"
                       type="text"
-                      name=" phone_number"
+                      name="phone_number"
                       value={values?.phone_number}
                       state={errors?.phone_number && "error"}
                     />
@@ -373,10 +367,10 @@ function OrganizationForm({ setModal }) {
                     <InputField
                       variant="auth"
                       extra="mb-3"
-                      label=" Notes*"
+                      label="Notes*"
                       placeholder="Enter Notes"
                       onChange={(e) => handleOnChange(e)}
-                      id=" addresnotesslincitye2"
+                      id="addresnotesslincitye2"
                       type="text"
                       name="notes"
                       value={values?.notes}

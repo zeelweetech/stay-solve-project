@@ -16,6 +16,7 @@ const Navbar = (props) => {
   const { onOpenSidenav, brandText } = props;
   const [darkmode, setDarkmode] = React.useState(false);
   const navigate = useNavigate();
+  const Role = localStorage.getItem("role");
 
   function removeCookie(name) {
     const expirationDate = new Date(); // A past date
@@ -26,10 +27,27 @@ const Navbar = (props) => {
 
   const handleOnClick = () => {
     localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    localStorage.removeItem("usernameOrEmail");
     removeCookie("token");
-    navigate("/");
+    if (Role === "superadmin") {
+      localStorage.removeItem("role");
+      localStorage.removeItem("usernameOrEmail");
+      navigate("/");
+    } else if (Role === "organizationuser") {
+      localStorage.removeItem("role");
+      localStorage.removeItem("usernameOrEmail");
+      localStorage.removeItem("is_verified");
+      localStorage.removeItem("organizationid");
+      localStorage.removeItem("organizationuserid");
+      navigate("/");
+    } else if (Role === "locationuser") {
+      localStorage.removeItem("role");
+      localStorage.removeItem("usernameOrEmail");
+      localStorage.removeItem("is_verified");
+      localStorage.removeItem("locationid");
+      localStorage.removeItem("locationuserid");
+      localStorage.removeItem("organizationid");
+      navigate("/");
+    }
   };
 
   return (
