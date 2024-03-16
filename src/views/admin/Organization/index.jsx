@@ -5,6 +5,7 @@ import OrganizationForm from "./Form/OrganizationForm";
 import { GetOrganization } from "Api/OrganizationApi";
 import OrganizationTable from "./Table/OrganizationTable";
 import SearchIcon from "components/icons/SearchIcon";
+import IndexOpen from "./Card/IndexOpen";
 
 function Organization() {
   const [modal, setModal] = useState(false);
@@ -52,7 +53,7 @@ function Organization() {
 
   return (
     <div>
-      {!modal && (
+      {!modal && !openUserData && (
         <Card extra="flex flex-col bg-white w-full rounded-3xl py-6 px-2 text-center mt-8">
           <div className="mb-auto flex items-center justify-between px-6">
             <h2 className="text-lg font-bold text-navy-700 dark:text-white">
@@ -80,7 +81,7 @@ function Organization() {
               </form>
             </h2>
             <button
-              className="!linear  bg-indigo-600 text-white z-[1] flex items-center justify-center rounded-lg p-2 font-semibold !transition !duration-200 hover:bg-indigo-500  focus-visible:outline-indigo-600"
+              className="!linear  z-[1] flex items-center justify-center rounded-lg bg-indigo-600 p-2 font-semibold text-white !transition !duration-200 hover:bg-indigo-500  focus-visible:outline-indigo-600"
               onClick={() => handleModalOnclick()}
             >
               ADD ORGANIZATION
@@ -106,6 +107,8 @@ function Organization() {
           OrganizationList={OrganizationList}
         />
       )}
+
+      {openUserData && <IndexOpen setOpenUserData={setSelectedData} />}
     </div>
   );
 }
