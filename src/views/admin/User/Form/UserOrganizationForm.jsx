@@ -352,12 +352,13 @@ function UserOrganizationForm({ setModal, secretKey, OrganizationUserList }) {
                   <div class="mt-2">
                     <InputField
                       variant="auth"
-                      extra="mb-3"
+                      extra="mb-3  color-purple-500 "
                       label="Upload Picture*"
                       placeholder="upload picture"
                       id="picture"
                       type="file"
                       name="picture"
+                      className="bg-purple-500"
                       onChange={(e) => handleOnChange(e)}
                       state={errors?.picture && "error"}
                     />
