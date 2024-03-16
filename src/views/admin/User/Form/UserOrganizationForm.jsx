@@ -10,7 +10,12 @@ import { MdClose } from "react-icons/md";
 import CryptoJS from "crypto-js";
 import Loader from "components/Loader";
 
-function UserOrganizationForm({ setModal, secretKey, OrganizationUserList }) {
+function UserOrganizationForm({
+  setModal,
+  secretKey,
+  OrganizationUserList,
+  selectedId,
+}) {
   const [values, setValues] = useState({});
   const [errors, setErrors] = useState({});
   const [organizationList, setOrganizationList] = useState([]);
@@ -82,8 +87,11 @@ function UserOrganizationForm({ setModal, secretKey, OrganizationUserList }) {
       newErrors.picture = "Please upload your picture";
     }
 
-    if (!values?.organizationid) {
-      newErrors.organizationid = "Please enter your parentorganization";
+    if (selectedId) {
+    } else {
+      if (!values?.organizationid) {
+        newErrors.organizationid = "Please enter your parentorganization";
+      }
     }
 
     var lowerCase = /[a-z]/g;
@@ -149,7 +157,10 @@ function UserOrganizationForm({ setModal, secretKey, OrganizationUserList }) {
       formdata.append("mobile_number", "+1" + values?.mobile_number);
       formdata.append("password", values?.password);
       formdata.append("confirmPassword", values?.confirmPassword);
-      formdata.append("organizationid", values?.organizationid);
+      formdata.append(
+        "organizationid",
+        selectedId ? selectedId : values?.organizationid
+      );
       formdata.append("picture", values?.picture);
 
       // organizationid: selectedId ? selectedId : values?.organizationid,
@@ -368,31 +379,32 @@ function UserOrganizationForm({ setModal, secretKey, OrganizationUserList }) {
                     )}
                   </div>
                 </div>
+                {!selectedId && (
+                  <div class="sm:col-span-3">
+                    <div class="mt-2">
+                      <Select
+                        variant="auth"
+                        extra="mb-3"
+                        label="Parent Organization*"
+                        id="parentorganization"
+                        type="text"
+                        name="organizationid"
+                        value={values?.organizationid}
+                        state={errors?.organizationid && "error"}
+                        onChange={(e) => handleOnChange(e)}
+                        options={organizationList}
+                        valueKey="organizationid"
+                        valueName="name"
+                      />
 
-                <div class="sm:col-span-3">
-                  <div class="mt-2">
-                    <Select
-                      variant="auth"
-                      extra="mb-3"
-                      label="Parent Organization*"
-                      id="parentorganization"
-                      type="text"
-                      name="organizationid"
-                      value={values?.organizationid}
-                      state={errors?.organizationid && "error"}
-                      onChange={(e) => handleOnChange(e)}
-                      options={organizationList}
-                      valueKey="organizationid"
-                      valueName="name"
-                    />
-
-                    {errors?.organizationid && (
-                      <p className="text-xs text-red-500">
-                        {errors?.organizationid}
-                      </p>
-                    )}
+                      {errors?.organizationid && (
+                        <p className="text-xs text-red-500">
+                          {errors?.organizationid}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                </div>
+                )}
 
                 <div class="sm:col-span-3">
                   <div class="mt-2">

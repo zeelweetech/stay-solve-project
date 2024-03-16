@@ -9,25 +9,42 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { MdClose } from "react-icons/md";
 import CryptoJS from "crypto-js";
+import { GetLocationListData } from "Api/LocationApi";
 
-function UserLocationForm({ setLocationModal, LocationUserList, secretKey }) {
+function UserLocationForm({
+  setLocationModal,
+  LocationUserList,
+  secretKey,
+  selectedId,
+}) {
   const [values, setValues] = useState({});
   const [errors, setErrors] = useState({});
   const [locationList, setLocationList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [location, setLocation] = useState([]);
 
   useEffect(() => {
     locationUserData();
-  }, []);
-
-  // useEffect(() => {
-  //   locationUserData();
-  // }, [!selectedId]);
+  }, [!selectedId]);
 
   const locationUserData = async () => {
     await GetLocation({ currentPage: "", search: "" })
       .then((res) => {
         setLocationList(res?.responseDataArray);
+      })
+      .catch((err) => {
+        console.log("err", err);
+      });
+  };
+
+  useEffect(() => {
+    LocationData();
+  }, [selectedId]);
+
+  const LocationData = async () => {
+    await GetLocationListData({ id: selectedId })
+      .then((res) => {
+        setLocation(res?.responseDataArray);
       })
       .catch((err) => {
         console.log("err", err);
@@ -378,7 +395,7 @@ function UserLocationForm({ setLocationModal, LocationUserList, secretKey }) {
                       value={values?.locationid}
                       state={errors?.locationid && "error"}
                       onChange={(e) => handleOnChange(e)}
-                      options={locationList}
+                      options={selectedId ? location : locationList}
                       valueKey={(option) => option?.data?.locationid}
                       valueName={(option) => option?.data?.name}
                     />

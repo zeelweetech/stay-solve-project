@@ -86,11 +86,14 @@ export async function GetOrganizationUser(currentPage) {
 export async function GetOrganizationUserListData({
   id: id,
   currentPage: currentPage,
+  search: search,
 }) {
   try {
     if (currentPage) {
       const response = await axios.get(
-        `${process.env.REACT_APP_LOCAL_URL}/get/particularorganization/users/${id}?page=${currentPage}&pageSize=10`,
+        search
+          ? `${process.env.REACT_APP_LOCAL_URL}/get/particularorganization/users/${id}?page=${currentPage}&pageSize=10&search=${search}`
+          : `${process.env.REACT_APP_LOCAL_URL}/get/particularorganization/users/${id}?page=${currentPage}&pageSize=10`,
         {
           headers: {
             Authorization: localStorage.getItem("token"),
@@ -109,6 +112,22 @@ export async function GetOrganizationUserListData({
       );
       return response.data;
     }
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function GetOrganizationListData(id) {
+  try {
+    const response = await axios.get(
+      `${process.env.REACT_APP_LOCAL_URL}/organizationlist/get/${id}`,
+      {
+        headers: {
+          Authorization: localStorage.getItem("token"),
+        },
+      }
+    );
+    return response.data;
   } catch (error) {
     throw error;
   }

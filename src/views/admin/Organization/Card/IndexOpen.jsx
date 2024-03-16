@@ -1,43 +1,84 @@
 import Card from "components/card";
 import React, { useEffect, useState } from "react";
-import { MdBarChart } from "react-icons/md";
-// import UserOrganizationForm from "./Form/UserOrganizationForm";
-// import UserLocationForm from "./Form/UserLocationForm";
-import SearchIcon from "components/icons/SearchIcon";
-
 import { IoIosArrowBack } from "react-icons/io";
-
-import { GetOrganizationUser } from "Api/OrganizationApi";
-
-import { GetLocationUser } from "Api/LocationApi";
 import CryptoJS from "crypto-js";
 import UserLocationForm from "views/admin/User/Form/UserLocationForm";
 import UserOrganizationForm from "views/admin/User/Form/UserOrganizationForm";
+import OrganizationUserCard from "./OrganizationUserCard";
+import LocationUserCard from "./LocationUserCard";
+import { GetOrganizationListData } from "Api/OrganizationApi";
+import { GetLocationListData } from "Api/LocationApi";
+import LocationCard from "./LocationCard";
+import { GetOrganizationUserListData } from "Api/OrganizationApi";
+import { GetLocationUserListData } from "Api/LocationApi";
 
-function Index({setOpenUserData}) {
+function IndexOpen({ setOpenUserData, selectedId }) {
   const [modal, setModal] = useState(false);
   const [locationmodal, setLocationModal] = useState(false);
-  const [organizationUser, setOrganizationUser] = useState([]);
+  const [listData, setListData] = useState();
+  const [location, setLocation] = useState();
+  const [locationCurrentPage, setLocationCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(false);
   const [count, setCount] = useState();
+  const [UserCount, setUserCount] = useState([]);
+  const [organizationUser, setOrganizationUser] = useState([]);
   const [orgLoading, setOrgLoading] = useState(false);
   const [organizationUserCurrentPage, setOrganizationUserCurrentPage] =
     useState(1);
-  const [orgSelectedData, setOrgSelectedData] = useState();
-  const [userSearchItem, setUserSearchItem] = useState("");
-  const [organizationfilteredUsers, setOrganizationFilteredUsers] = useState(
-    []
-  );
   const [locationUser, setLocationUser] = useState([]);
-  const [locationCount, setLocationCount] = useState();
+  const [locationUserCount, setLocationUserCount] = useState();
   const [locationLoading, setLocationLoading] = useState(false);
-  const [locationSelectedData, setLocationSelectedData] = useState();
-  const [locationfilteredUsers, setLocationFilteredUsers] = useState([]);
-  const [locationSearchItem, setLocationSearchItem] = useState("");
   const [locationUserCurrentPage, setLocationUserCurrentPage] = useState(1);
   const encryptedData = `${process.env.REACT_APP_LOCAL_FILE_URL}`;
   const secretKey = "alibaba1234@Devops&$%";
   const bytes = CryptoJS?.AES?.decrypt(encryptedData, secretKey);
   const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
+
+  useEffect(() => {
+    GetSelectData();
+  }, [selectedId]);
+
+  const GetSelectData = async () => {
+    await GetOrganizationListData(selectedId)
+      .then((res) => {
+        console.log("res", res);
+        const data = res?.orgData?.map((item) => {
+          return item;
+        })?.[0];
+        setListData(data);
+      })
+      .catch((err) => {
+        console.log("err", err);
+      });
+  };
+
+  //Location Logic
+  useEffect(() => {
+    LocationList();
+  }, [location === undefined ? location : "", locationCurrentPage]);
+
+  const LocationList = async (searchTerm) => {
+    setLoading(true);
+    await GetLocationListData(
+      searchTerm
+        ? {
+            id: selectedId,
+            currentPage: locationCurrentPage,
+            search: searchTerm,
+          }
+        : { id: selectedId, currentPage: locationCurrentPage }
+    )
+      .then((res) => {
+        console.log("res", res);
+        setLocation(res?.responseDataArray);
+        setCount(res?.totalDocuments === 0 ? 1 : res?.totalDocuments);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log("err", err);
+        setLoading(false);
+      });
+  };
 
   // OrganizationUser Logic
   useEffect(() => {
@@ -47,44 +88,27 @@ function Index({setOpenUserData}) {
     organizationUserCurrentPage,
   ]);
 
-  const OrganizationUserList = async () => {
+  const OrganizationUserList = async (userSearchItem) => {
     setOrgLoading(true);
-    await GetOrganizationUser(organizationUserCurrentPage)
+    await GetOrganizationUserListData(
+      userSearchItem
+        ? {
+            id: selectedId,
+            currentPage: organizationUserCurrentPage,
+            search: userSearchItem,
+          }
+        : { id: selectedId, currentPage: organizationUserCurrentPage }
+    )
       .then((res) => {
         console.log("res", res);
         setOrganizationUser(res?.responseDataArray);
-        setCount(res?.totalDocuments === 0 ? 1 : res?.totalDocuments);
+        setUserCount(res?.totalDocuments === 0 ? 1 : res?.totalDocuments);
         setOrgLoading(false);
       })
       .catch((err) => {
         console.log("err", err);
         setOrgLoading(false);
       });
-  };
-
-  const handleUserInputChange = (e) => {
-    const userSearchItem = e.target.value;
-    setUserSearchItem(userSearchItem);
-
-    const OrganizationfilteredItems = orgSelectedData.filter(
-      ({
-        firstname,
-        username,
-        lastname,
-        email,
-        mobile_number,
-        parent_organization,
-      }) => {
-        const searchString =
-          `${firstname} ${username}${lastname} ${email} ${mobile_number} ${parent_organization} }`.toLowerCase();
-        return searchString.includes(userSearchItem.toLowerCase());
-      }
-    );
-    setOrganizationFilteredUsers(OrganizationfilteredItems);
-  };
-
-  const handleModalOnclick = () => {
-    setModal(true);
   };
 
   // LocationUser Logic
@@ -92,13 +116,24 @@ function Index({setOpenUserData}) {
     LocationUserList();
   }, [locationUser === undefined ? locationUser : "", locationUserCurrentPage]);
 
-  const LocationUserList = async () => {
+  const LocationUserList = async (locationSearchItem) => {
     setLocationLoading(true);
-    await GetLocationUser(locationUserCurrentPage)
+    await GetLocationUserListData(
+      locationSearchItem
+        ? {
+            id: selectedId,
+            currentPage: locationUserCurrentPage,
+            search: locationSearchItem,
+          }
+        : {
+            id: selectedId,
+            currentPage: locationUserCurrentPage,
+          }
+    )
       .then((res) => {
         console.log("res", res);
         setLocationUser(res?.responseDataArray);
-        setLocationCount(res?.totalDocuments === 0 ? 1 : res?.totalDocuments);
+        setLocationUserCount(res?.totaldocument === 0 ? 1 : res?.totaldocument);
         setLocationLoading(false);
       })
       .catch((err) => {
@@ -107,158 +142,53 @@ function Index({setOpenUserData}) {
       });
   };
 
-  const handleLocationInputChange = (e) => {
-    const locationSearchItem = e.target.value;
-    setLocationSearchItem(locationSearchItem);
-
-    const LocationfilteredItems = locationSelectedData.filter(
-      ({
-        firstname,
-        username,
-        lastname,
-        email,
-        mobile_number,
-        parent_location,
-        parent_organization,
-      }) => {
-        const searchString =
-          `${firstname} ${username} ${lastname} ${email} ${mobile_number} ${parent_location} ${parent_organization}}`.toLowerCase();
-        return searchString.includes(locationSearchItem.toLowerCase());
-      }
-    );
-    setLocationFilteredUsers(LocationfilteredItems);
-  };
-
-  const handleModalOnclickLocationUSer = () => {
-    setLocationModal(true);
-  };
-
-  
-
   return (
     <div>
       {!modal && !locationmodal && (
         <div>
           <div>
-            <button className="mt-5  text-xl"  onClick={setOpenUserData(false)}>
-              <IoIosArrowBack />
+            <button
+              className="mt-5 dark:text-white"
+              onClick={() => setOpenUserData(false)}
+            >
+              <IoIosArrowBack
+                strokeWidth={2}
+                className="h-10 w-10 cursor-pointer"
+              />
             </button>
           </div>
-          <Card extra="flex flex-col bg-white w-full rounded-3xl py-6 px-2 text-center mt-8">
-           
-          </Card>
+          <Card extra="flex flex-col bg-white w-full rounded-3xl py-6 px-2 text-center mt-8"></Card>
 
-          <Card extra="flex flex-col bg-white w-full rounded-3xl py-6 px-2 text-center mt-8">
-            <div className="mb-auto flex items-center justify-between px-6">
-              <h2 className="text-lg font-bold text-navy-700 dark:text-white">
-                <form class="mx-auto max-w-md">
-                  <p>Location</p>
-                  <label
-                    for="default-search"
-                    class="sr-only mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Search
-                  </label>
-                  <div class="relative">
-                    <div class="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3">
-                      <svg
-                        class="h-4 w-4 text-gray-500 dark:text-gray-400"
-                        aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          stroke="currentColor"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                        />
-                      </svg>
-                    </div>
-                    <input
-                      type="search"
-                      id="default-search"
-                      class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-4 ps-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                      placeholder="Search Location..."
-                      required
-                    />
-                  </div>
-                </form>
-              </h2>
-            </div>
-          </Card>
+          <LocationCard
+            location={location}
+            LocationList={LocationList}
+            loading={loading}
+            locationCurrentPage={locationCurrentPage}
+            setLocationCurrentPage={setLocationCurrentPage}
+            count={count}
+          />
 
-          <Card extra="flex flex-col bg-white w-full rounded-3xl py-6 px-2 text-center mt-8">
-            <div className="mb-auto flex items-center justify-between px-6">
-              <h2 className="text-lg font-bold text-navy-700 dark:text-white">
-                <form class="mx-auto max-w-md">
-                  <label
-                    for="default-search"
-                    class="sr-only mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Search
-                  </label>
-                  <div class="relative">
-                    <div class="pointer-events-none absolute inset-y-0 start-0 flex items-center">
-                      <SearchIcon />
-                    </div>
-                    <input
-                      type="search"
-                      id="default-search"
-                      class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-4 ps-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                      placeholder="Search Org User..."
-                      required
-                      value={userSearchItem}
-                      onChange={handleUserInputChange}
-                    />
-                  </div>
-                </form>
-              </h2>
-              <button
-                className="!linear  z-[1] flex items-center justify-center rounded-lg bg-indigo-600 p-2 font-semibold text-white !transition !duration-200 hover:bg-indigo-500  focus-visible:outline-indigo-600"
-                onClick={() => handleModalOnclick()}
-              >
-                ADD ORGANIZATION USER
-              </button>
-            </div>
-          </Card>
+          <OrganizationUserCard
+            setModal={setModal}
+            UserCount={UserCount}
+            organizationUserCurrentPage={organizationUserCurrentPage}
+            orgLoading={orgLoading}
+            decryptedData={decryptedData}
+            organizationUser={organizationUser}
+            setOrganizationUserCurrentPage={setOrganizationUserCurrentPage}
+            OrganizationUserList={OrganizationUserList}
+          />
 
-          <Card extra="flex flex-col bg-white w-full rounded-3xl py-6 px-2 text-center mt-8">
-            <div className="mb-auto flex items-center justify-between px-6">
-              <h2 className="text-lg font-bold text-navy-700 dark:text-white">
-                <form class="mx-auto max-w-md">
-                  <label
-                    for="default-search"
-                    class="sr-only mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
-                    Search
-                  </label>
-                  <div class="relative">
-                    <div class="pointer-events-none absolute inset-y-0 start-0 flex items-center">
-                      <SearchIcon />
-                    </div>
-                    <input
-                      type="search"
-                      id="default-search"
-                      class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-4 ps-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                      placeholder="Search Loc User..."
-                      required
-                      value={locationSearchItem}
-                      onChange={handleLocationInputChange}
-                    />
-                  </div>
-                </form>
-              </h2>
-              <button
-                className="!linear  z-[1] flex items-center justify-center rounded-lg bg-indigo-600 p-2 font-semibold text-white !transition !duration-200 hover:bg-indigo-500  focus-visible:outline-indigo-600"
-                onClick={() => handleModalOnclickLocationUSer()}
-              >
-                ADD LOCATION USER
-              </button>
-            </div>
-          </Card>
+          <LocationUserCard
+            setLocationModal={setLocationModal}
+            locationUser={locationUser}
+            locationUserCurrentPage={locationUserCurrentPage}
+            setLocationUserCurrentPage={setLocationUserCurrentPage}
+            locationLoading={locationLoading}
+            locationUserCount={locationUserCount}
+            decryptedData={decryptedData}
+            LocationUserList={LocationUserList}
+          />
         </div>
       )}
       {modal && (
@@ -266,6 +196,7 @@ function Index({setOpenUserData}) {
           setModal={setModal}
           secretKey={secretKey}
           OrganizationUserList={OrganizationUserList}
+          selectedId={selectedId}
         />
       )}
       {locationmodal && (
@@ -273,10 +204,11 @@ function Index({setOpenUserData}) {
           setLocationModal={setLocationModal}
           LocationUserList={LocationUserList}
           secretKey={secretKey}
+          selectedId={selectedId}
         />
       )}
     </div>
   );
 }
 
-export default Index;
+export default IndexOpen;

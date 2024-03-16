@@ -107,8 +107,9 @@ function Organization() {
           OrganizationList={OrganizationList}
         />
       )}
-
-      {openUserData && <IndexOpen setOpenUserData={setSelectedData} />}
+      {openUserData && (
+        <IndexOpen setOpenUserData={setOpenUserData} selectedId={selectedId} />
+      )}
     </div>
   );
 }
