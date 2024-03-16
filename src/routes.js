@@ -34,6 +34,11 @@ import {
   MdPerson,
   MdLock,
 } from "react-icons/md";
+import { IoDocuments, IoSearch } from "react-icons/io5";
+import { RiOrganizationChart, RiUserLocationLine } from "react-icons/ri";
+import { FaRegUserCircle, FaUserCircle } from "react-icons/fa";
+import { HiOutlineDocumentText } from "react-icons/hi";
+import { AiOutlineTeam } from "react-icons/ai";
 
 const Role = localStorage?.getItem("role");
 
@@ -51,21 +56,21 @@ const routes =
           name: "Organization",
           layout: "/",
           path: "organization",
-          icon: <MdHome className="h-6 w-6" />,
+          icon: <RiOrganizationChart className="h-6 w-6" />,
           component: <Organization />,
         },
         {
           name: "Location",
           layout: "/",
           path: "location",
-          icon: <MdHome className="h-6 w-6" />,
+          icon: <AiOutlineTeam className="h-6 w-6" />,
           component: <Location />,
         },
         {
           name: "User",
           layout: "/",
           path: "user",
-          icon: <MdLock className="h-6 w-6" />,
+          icon: <FaRegUserCircle className="h-6 w-6" />,
           component: <User />,
         },
         // {
@@ -111,35 +116,35 @@ const routes =
           name: "Search",
           layout: "/",
           path: "search",
-          icon: <MdHome className="h-6 w-6" />,
+          icon: <IoSearch className="h-6 w-6" />,
           component: <OrganizationPanelSearch />,
         },
         {
           name: "Organization",
           layout: "/",
           path: "organization",
-          icon: <MdHome className="h-6 w-6" />,
+          icon: <RiOrganizationChart className="h-6 w-6" />,
           component: <OrganizationPanelOrg />,
         },
         {
           name: "Location",
           layout: "/",
           path: "location",
-          icon: <MdHome className="h-6 w-6" />,
+          icon: <AiOutlineTeam className="h-6 w-6" />,
           component: <OrganizationPanelLocation />,
         },
         {
           name: "User",
           layout: "/",
           path: "user",
-          icon: <MdHome className="h-6 w-6" />,
+          icon: <FaRegUserCircle className="h-6 w-6" />,
           component: <OrganizationPanelUsers />,
         },
         {
           name: "Documents",
           layout: "/",
           path: "documents",
-          icon: <MdHome className="h-6 w-6" />,
+          icon: <HiOutlineDocumentText className="h-6 w-6" />,
           component: <OrganizationPanelDocumets />,
         },
         {
@@ -163,7 +168,7 @@ const routes =
           name: "Search",
           layout: "/",
           path: "search",
-          icon: <MdHome className="h-6 w-6" />,
+          icon: <IoSearch className="h-6 w-6" />,
           component: <LocationPanelSearch />,
         },
         {
@@ -177,14 +182,14 @@ const routes =
           name: "Users",
           layout: "/",
           path: "users",
-          icon: <MdHome className="h-6 w-6" />,
+          icon: <AiOutlineTeam className="h-6 w-6" />,
           component: <LocationPanelUsers />,
         },
         {
           name: "Documents",
           layout: "/",
           path: "documents",
-          icon: <MdHome className="h-6 w-6" />,
+          icon: <HiOutlineDocumentText className="h-6 w-6" />,
           component: <LocationPanelDocuments />,
         },
         {

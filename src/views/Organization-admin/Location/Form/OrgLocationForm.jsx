@@ -152,11 +152,11 @@ function OrgLocationForm({ setModal, OrganizationID, LocationList }) {
           />
         </div>
         <form className="p-5">
-          <div class="space-y-12">
-            <div class="border-b border-gray-900/10 pb-12">
-              <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                <div class="sm:col-span-3">
-                  <div class="mt-2">
+          <div className="space-y-12">
+            <div className="border-b border-gray-900/10 pb-12">
+              <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                <div className="sm:col-span-3">
+                  <div className="mt-2">
                     <InputField
                       variant="auth"
                       extra="mb-3"
@@ -176,8 +176,8 @@ function OrgLocationForm({ setModal, OrganizationID, LocationList }) {
                   </div>
                 </div>
 
-                <div class="sm:col-span-3">
-                  <div class="mt-2">
+                <div className="sm:col-span-3">
+                  <div className="mt-2">
                     <InputField
                       variant="auth"
                       extra="mb-3"
@@ -196,8 +196,8 @@ function OrgLocationForm({ setModal, OrganizationID, LocationList }) {
                   </div>
                 </div>
 
-                <div class="sm:col-span-3">
-                  <div class="mt-2">
+                <div className="sm:col-span-3">
+                  <div className="mt-2">
                     <InputField
                       variant="auth"
                       extra="mb-3"
@@ -217,8 +217,8 @@ function OrgLocationForm({ setModal, OrganizationID, LocationList }) {
                   </div>
                 </div>
 
-                <div class="sm:col-span-3">
-                  <div class="mt-2">
+                <div className="sm:col-span-3">
+                  <div className="mt-2">
                     <InputField
                       variant="auth"
                       extra="mb-3"
@@ -240,7 +240,7 @@ function OrgLocationForm({ setModal, OrganizationID, LocationList }) {
                   </div>
                 </div>
 
-                <div class="sm:col-span-3">
+                <div className="sm:col-span-3">
                   <InputField
                     variant="auth"
                     extra="mb-3"
@@ -259,7 +259,7 @@ function OrgLocationForm({ setModal, OrganizationID, LocationList }) {
                   )}
                 </div>
 
-                <div class="sm:col-span-3">
+                <div className="sm:col-span-3">
                   <InputField
                     variant="auth"
                     extra="mb-3"
@@ -280,8 +280,8 @@ function OrgLocationForm({ setModal, OrganizationID, LocationList }) {
                   )}
                 </div>
 
-                <div class="sm:col-span-3">
-                  <div class="mt-2">
+                <div className="sm:col-span-3">
+                  <div className="mt-2">
                     <InputField
                       variant="auth"
                       extra="mb-3"
@@ -296,15 +296,15 @@ function OrgLocationForm({ setModal, OrganizationID, LocationList }) {
                     />
 
                     {errors?.address_line1 && (
-                      <p className="text-xs text-red-500">
+                      <p classNameName="text-xs text-red-500">
                         {errors?.address_line1}
                       </p>
                     )}
                   </div>
                 </div>
 
-                <div class="sm:col-span-3">
-                  <div class="mt-2">
+                <div className="sm:col-span-3">
+                  <div className="mt-2">
                     <InputField
                       variant="auth"
                       extra="mb-3"
@@ -319,8 +319,8 @@ function OrgLocationForm({ setModal, OrganizationID, LocationList }) {
                   </div>
                 </div>
 
-                <div class="sm:col-span-2 sm:col-start-1">
-                  <div class="mt-2">
+                <div className="sm:col-span-2 sm:col-start-1">
+                  <div className="mt-2">
                     <InputField
                       variant="auth"
                       extra="mb-3"
@@ -340,8 +340,8 @@ function OrgLocationForm({ setModal, OrganizationID, LocationList }) {
                   </div>
                 </div>
 
-                <div class="sm:col-span-2">
-                  <div class="mt-2">
+                <div className="sm:col-span-2">
+                  <div className="mt-2">
                     <InputField
                       variant="auth"
                       extra="mb-3"
@@ -361,8 +361,8 @@ function OrgLocationForm({ setModal, OrganizationID, LocationList }) {
                   </div>
                 </div>
 
-                <div class="sm:col-span-2">
-                  <div class="mt-2">
+                <div className="sm:col-span-2">
+                  <div className="mt-2">
                     <InputField
                       variant="auth"
                       extra="mb-3"
@@ -382,8 +382,8 @@ function OrgLocationForm({ setModal, OrganizationID, LocationList }) {
                   </div>
                 </div>
 
-                <div class="sm:col-span-3">
-                  <div class="mt-2">
+                <div className="sm:col-span-3">
+                  <div className="mt-2">
                     <InputField
                       variant="auth"
                       extra="mb-3"
@@ -404,10 +404,10 @@ function OrgLocationForm({ setModal, OrganizationID, LocationList }) {
             </div>
           </div>
 
-          <div class="mt-6 flex items-center justify-center gap-x-6">
+          <div className="mt-6 flex items-center justify-center gap-x-6">
             <button
               type="submit"
-              class="flex rounded-md bg-indigo-600 px-10 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              className="flex rounded-md bg-indigo-600 px-10 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               onClick={(e) => handleOnSubmit(e)}
             >
               Submit
