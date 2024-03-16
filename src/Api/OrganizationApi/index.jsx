@@ -82,3 +82,34 @@ export async function GetOrganizationUser(currentPage) {
     throw error;
   }
 }
+
+export async function GetOrganizationUserListData({
+  id: id,
+  currentPage: currentPage,
+}) {
+  try {
+    if (currentPage) {
+      const response = await axios.get(
+        `${process.env.REACT_APP_LOCAL_URL}/get/particularorganization/users/${id}?page=${currentPage}&pageSize=10`,
+        {
+          headers: {
+            Authorization: localStorage.getItem("token"),
+          },
+        }
+      );
+      return response.data;
+    } else {
+      const response = await axios.get(
+        `${process.env.REACT_APP_LOCAL_URL}/get/particularorganization/users/${id}`,
+        {
+          headers: {
+            Authorization: localStorage.getItem("token"),
+          },
+        }
+      );
+      return response.data;
+    }
+  } catch (error) {
+    throw error;
+  }
+}

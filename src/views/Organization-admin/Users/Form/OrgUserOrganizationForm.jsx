@@ -1,18 +1,37 @@
+import { AddVerifyEmail } from "Api/authApi";
 import Card from "components/card";
 import InputField from "components/fields/InputField";
 import React, { useState } from "react";
 import { MdClose } from "react-icons/md";
+import CryptoJS from "crypto-js";
+import { AddOrganizationUser } from "Api/OrganizationApi";
+import toast from "react-hot-toast";
+import Loader from "components/Loader";
 
-function OrgUserOrganizationForm({ setModal }) {
+function OrgUserOrganizationForm({
+  setModal,
+  secretKey,
+  OrganizationUserList,
+  OrganizationID,
+}) {
   const [values, setValues] = useState({});
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const handleOnChange = (e) => {
-    const { value, name } = e.target;
-    setValues({ ...values, [name]: value });
-    setErrors({ ...errors, [name]: '' });
-
-    console.log("Updated values:", { ...values, [name]: value });
+    const { value, name, files } = e.target;
+    if (name === "picture") {
+      setValues({
+        ...values,
+        [name]: files[0],
+      });
+    } else {
+      setValues({
+        ...values,
+        [name]: value,
+      });
+    }
+    setErrors({ ...errors, [name]: "" });
   };
 
   const validation = () => {
@@ -23,17 +42,17 @@ function OrgUserOrganizationForm({ setModal }) {
     }
 
     if (!values?.lastname) {
-        newErrors.lastname = "Please enter your last name";
-      }
+      newErrors.lastname = "Please enter your last name";
+    }
 
     if (!values?.username) {
       newErrors.username = "Please enter your useName";
     }
 
-    if (!values?.phone_number) {
-      newErrors.phone_number = "Please enter your phone number";
-    } else if (!/^\d{10}$/.test(values?.phone_number)) {
-      newErrors.phone_number = "Please enter your valid phone number";
+    if (!values?.mobile_number) {
+      newErrors.mobile_number = "Please enter your phone number";
+    } else if (!/^\d{10}$/.test(values?.mobile_number)) {
+      newErrors.mobile_number = "Please enter your valid phone number";
     }
 
     if (!values?.email) {
@@ -42,19 +61,10 @@ function OrgUserOrganizationForm({ setModal }) {
       newErrors.email = "Please enter your valid email";
     }
 
-   
-
     if (!values?.picture) {
       newErrors.picture = "Please upload your picture";
     }
 
-    if (!values?.organizationid) {
-      newErrors.organizationid = "Please enter your parentorganization";
-    }
-
-   
-    // if (editData?.organizationid) {
-    // } else {
     var lowerCase = /[a-z]/g;
     var upperCase = /[A-Z]/g;
     var numbers = /[0-9]/g;
@@ -73,32 +83,86 @@ function OrgUserOrganizationForm({ setModal }) {
     } else if (!values?.password.match(specialChar)) {
       newErrors.password = "Password should contains specialChar";
     }
-    // }
-
 
     if (!values.confirmPassword) {
-        newErrors.confirmPassword = "Please confirm your password";
-      } else if (values.confirmPassword !== values.password) {
-        newErrors.confirmPassword = "Passwords do not match";
-      }
+      newErrors.confirmPassword = "Please confirm your password";
+    } else if (values.confirmPassword !== values.password) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleOnSubmit = (e) => {
-    e.preventDefault();
+  const encryptEmail = (email) => {
+    const encryptedEmail = CryptoJS.AES.encrypt(email, secretKey).toString();
+    return encryptedEmail;
+  };
 
+  const VerifyEmail = async (email, password) => {
+    const encryptedEmail = encryptEmail(email);
+    const body = {
+      email: encryptedEmail,
+      role: "organizationuser",
+      password: password,
+    };
+    await AddVerifyEmail(body)
+      .then((res) => {
+        toast.success(res?.message);
+      })
+      .catch((err) => {
+        console.log("err", err);
+      });
+  };
+
+  const handleOnSubmit = async (e) => {
+    e.preventDefault();
     if (validation()) {
-      console.log("done$$$");
+      setLoading(true);
+      var formdata = new FormData();
+      formdata.append("firstname", values?.firstname);
+      formdata.append("username", values?.username);
+      formdata.append("lastname", values?.lastname);
+      formdata.append("email", values?.email);
+      formdata.append("mobile_number", "+1" + values?.mobile_number);
+      formdata.append("password", values?.password);
+      formdata.append("confirmPassword", values?.confirmPassword);
+      formdata.append("organizationid", OrganizationID);
+      formdata.append("picture", values?.picture);
+
+      // organizationid: selectedId ? selectedId : values?.organizationid,
+
+      await AddOrganizationUser(formdata)
+        .then((res) => {
+          console.log("res", res);
+          toast.success(res?.message);
+          setValues({
+            firstname: "",
+            username: "",
+            lastname: "",
+            email: "",
+            mobile_number: "",
+            password: "",
+            confirmPassword: "",
+            organizationid: "",
+            picture: "",
+          });
+          VerifyEmail(values?.email, values?.password);
+          OrganizationUserList();
+          setLoading(false);
+          setModal(false);
+        })
+        .catch((err) => {
+          console.log("err", err);
+          toast.error(err?.response?.data?.error);
+          setLoading(false);
+        });
     }
   };
 
   const handleClose = () => {
     setModal(false);
   };
-
-  console.log("errors", errors);
 
   return (
     <div>
@@ -130,7 +194,9 @@ function OrgUserOrganizationForm({ setModal }) {
                     />
 
                     {errors?.firstname && (
-                      <p className="text-xs text-red-500">{errors?.firstname}</p>
+                      <p className="text-xs text-red-500">
+                        {errors?.firstname}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -206,15 +272,15 @@ function OrgUserOrganizationForm({ setModal }) {
                       placeholder="Enter Your phone number"
                       id="phone number"
                       type="text"
-                      name="phone_number"
-                      value={values?.phone_number}
-                      state={errors?.phone_number && "error"}
+                      name="mobile_number"
+                      value={values?.mobile_number}
+                      state={errors?.mobile_number && "error"}
                       onChange={(e) => handleOnChange(e)}
                     />
 
-                    {errors?.phone_number && (
+                    {errors?.mobile_number && (
                       <p className="text-xs text-red-500">
-                        {errors?.phone_number}
+                        {errors?.mobile_number}
                       </p>
                     )}
                   </div>
@@ -239,8 +305,6 @@ function OrgUserOrganizationForm({ setModal }) {
                   )}
                 </div>
 
-               
-
                 <div class="sm:col-span-3">
                   <InputField
                     variant="auth"
@@ -256,10 +320,11 @@ function OrgUserOrganizationForm({ setModal }) {
                   />
 
                   {errors?.confirmPassword && (
-                    <p className="text-xs text-red-500">{errors?.confirmPassword}</p>
+                    <p className="text-xs text-red-500">
+                      {errors?.confirmPassword}
+                    </p>
                   )}
                 </div>
-
 
                 <div class="sm:col-span-3">
                   <div class="mt-2">
@@ -281,7 +346,21 @@ function OrgUserOrganizationForm({ setModal }) {
                   </div>
                 </div>
 
-               
+                <div class="sm:col-span-3">
+                  <div class="mt-2">
+                    {values?.picture && (
+                      <img
+                        src={
+                          values?.picture
+                            ? URL.createObjectURL(values?.picture)
+                            : ""
+                        }
+                        alt="picture"
+                        style={{ width: 100, height: 100 }}
+                      />
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -289,10 +368,11 @@ function OrgUserOrganizationForm({ setModal }) {
           <div class="mt-6 flex items-center justify-center gap-x-6">
             <button
               type="submit"
-              class="rounded-md bg-indigo-600 px-10 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              class="flex rounded-md bg-indigo-600 px-10 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               onClick={(e) => handleOnSubmit(e)}
             >
               Submit
+              {loading && <Loader height={25} width={25} />}
             </button>
           </div>
         </form>

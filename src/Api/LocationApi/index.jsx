@@ -82,3 +82,65 @@ export async function AddLocationUser(body) {
     throw error;
   }
 }
+
+export async function GetLocationListData({
+  id: id,
+  currentPage: currentPage,
+}) {
+  try {
+    if (currentPage) {
+      const response = await axios.get(
+        `${process.env.REACT_APP_LOCAL_URL}/locationlist/get/org/${id}?page=${currentPage}&pageSize=10`,
+        {
+          headers: {
+            Authorization: localStorage.getItem("token"),
+          },
+        }
+      );
+      return response.data;
+    } else {
+      const response = await axios.get(
+        `${process.env.REACT_APP_LOCAL_URL}/locationlist/get/org/${id}`,
+        {
+          headers: {
+            Authorization: localStorage.getItem("token"),
+          },
+        }
+      );
+      return response.data;
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function GetLocationUserListData({
+  id: id,
+  currentPage: currentPage,
+}) {
+  try {
+    if (currentPage) {
+      const response = await axios.get(
+        `${process.env.REACT_APP_LOCAL_URL}/get/organization/location/users/${id}?page=${currentPage}&pageSize=10`,
+        {
+          headers: {
+            Authorization: localStorage.getItem("token"),
+          },
+        }
+      );
+      return response.data;
+    } else {
+      const response = await axios.get(
+        `${process.env.REACT_APP_LOCAL_URL}/get/organization/location/users/${id}`,
+        {
+          headers: {
+            Authorization: localStorage.getItem("token"),
+          },
+        }
+      );
+      return response.data;
+    }
+  } catch (error) {
+    throw error;
+  }
+}

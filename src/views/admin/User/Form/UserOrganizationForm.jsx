@@ -120,11 +120,12 @@ function UserOrganizationForm({ setModal, secretKey, OrganizationUserList }) {
     return encryptedEmail;
   };
 
-  const VerifyEmail = async (email) => {
+  const VerifyEmail = async (email, password) => {
     const encryptedEmail = encryptEmail(email);
     const body = {
       email: encryptedEmail,
       role: "organizationuser",
+      password: password,
     };
     await AddVerifyEmail(body)
       .then((res) => {
@@ -168,7 +169,7 @@ function UserOrganizationForm({ setModal, secretKey, OrganizationUserList }) {
             organizationid: "",
             picture: "",
           });
-          VerifyEmail(values?.email);
+          VerifyEmail(values?.email, values?.password);
           OrganizationUserList();
           setLoading(false);
           setModal(false);

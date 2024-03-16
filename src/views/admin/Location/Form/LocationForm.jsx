@@ -33,7 +33,7 @@ function LocationForm({ setModal, LocationList, organizationList }) {
     }
 
     if (!values?.username) {
-      newErrors.username = "Please enter your useName";
+      newErrors.username = "Please enter your usename";
     }
 
     if (!values?.phone_number) {

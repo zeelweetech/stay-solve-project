@@ -1,18 +1,20 @@
+import { AddLocation } from "Api/LocationApi";
+import Loader from "components/Loader";
 import Card from "components/card";
 import InputField from "components/fields/InputField";
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 import { MdClose } from "react-icons/md";
 
-function OrgLocationForm({ setModal }) {
+function OrgLocationForm({ setModal, OrganizationID, LocationList }) {
   const [values, setValues] = useState({});
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const handleOnChange = (e) => {
     const { value, name } = e.target;
     setValues({ ...values, [name]: value });
-    setErrors({ ...errors, [name]: '' });
-
-    console.log("Updated values:", { ...values, [name]: value });
+    setErrors({ ...errors, [name]: "" });
   };
 
   const validation = () => {
@@ -23,7 +25,7 @@ function OrgLocationForm({ setModal }) {
     }
 
     if (!values?.username) {
-      newErrors.username = "Please enter your useName";
+      newErrors.username = "Please enter your usename";
     }
 
     if (!values?.phone_number) {
@@ -42,10 +44,6 @@ function OrgLocationForm({ setModal }) {
       newErrors.address_line1 = "Please enter your address";
     }
 
-    // if (!values?.address_line2) {
-    //   newErrors.address_line2 = "error";
-    // }
-
     if (!values?.city) {
       newErrors.city = "Please enter your city";
     }
@@ -54,18 +52,12 @@ function OrgLocationForm({ setModal }) {
       newErrors.state = "Please enter your state";
     }
 
-    if (!values?.organizationid) {
-      newErrors.organizationid = "Please enter your parentorganization";
-    }
-
     if (!values?.zip_code) {
       newErrors.zip_code = "Please enter your zipcode";
-    } else if (!/^\d{6}$/.test(values?.zip_code)) {
+    } else if (!/^\d{5}$/.test(values?.zip_code)) {
       newErrors.zip_code = "Please enter your valid zipcode";
     }
 
-    // if (editData?.organizationid) {
-    // } else {
     var lowerCase = /[a-z]/g;
     var upperCase = /[A-Z]/g;
     var numbers = /[0-9]/g;
@@ -84,25 +76,70 @@ function OrgLocationForm({ setModal }) {
     } else if (!values?.password.match(specialChar)) {
       newErrors.password = "Password should contains specialChar";
     }
-    // }
+
+    if (!values?.confirmPassword) {
+      newErrors.confirmPassword = "Please confirm your password";
+    } else if (values?.confirmPassword !== values?.password) {
+      newErrors.confirmPassword = "Confirm password do not match";
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleOnSubmit = (e) => {
+  const handleOnSubmit = async (e) => {
     e.preventDefault();
-
     if (validation()) {
-      console.log("done$$$");
+      setLoading(true);
+      const body = {
+        name: values?.name,
+        username: values?.username,
+        phone_number: "+1" + values?.phone_number,
+        email: values?.email,
+        password: values?.password,
+        confirmPassword: values?.confirmPassword,
+        address_line1: values?.address_line1,
+        address_line2: values?.address_line2,
+        state: values?.state,
+        city: values?.city,
+        zip_code: values?.zip_code,
+        notes: values?.notes,
+        organizationid: OrganizationID,
+      };
+      await AddLocation(body)
+        .then((res) => {
+          console.log("res", res);
+          toast.success(res?.message);
+          setValues({
+            name: "",
+            username: "",
+            phone_number: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+            address_line1: "",
+            address_line2: "",
+            city: "",
+            state: "",
+            zip_code: "",
+            notes: "",
+            organizationid: "",
+          });
+          setModal(false);
+          setLoading(false);
+          LocationList();
+        })
+        .catch((err) => {
+          console.log("err", err);
+          toast.error(err?.response?.data?.error);
+          setLoading(false);
+        });
     }
   };
 
   const handleClose = () => {
     setModal(false);
   };
-
-  console.log("errors", errors);
 
   return (
     <div>
@@ -181,6 +218,29 @@ function OrgLocationForm({ setModal }) {
                 </div>
 
                 <div class="sm:col-span-3">
+                  <div class="mt-2">
+                    <InputField
+                      variant="auth"
+                      extra="mb-3"
+                      label="Phone Number*"
+                      placeholder="Enter Your phone number"
+                      id="phone number"
+                      type="text"
+                      name="phone_number"
+                      value={values?.phone_number}
+                      state={errors?.phone_number && "error"}
+                      onChange={(e) => handleOnChange(e)}
+                    />
+
+                    {errors?.phone_number && (
+                      <p className="text-xs text-red-500">
+                        {errors?.phone_number}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div class="sm:col-span-3">
                   <InputField
                     variant="auth"
                     extra="mb-3"
@@ -196,6 +256,27 @@ function OrgLocationForm({ setModal }) {
 
                   {errors?.password && (
                     <p className="text-xs text-red-500">{errors?.password}</p>
+                  )}
+                </div>
+
+                <div class="sm:col-span-3">
+                  <InputField
+                    variant="auth"
+                    extra="mb-3"
+                    label="Confirm Password*"
+                    placeholder="Confirm Password"
+                    id="password"
+                    type="password"
+                    name="confirmPassword"
+                    value={values?.confirmPassword}
+                    state={errors?.confirmPassword && "error"}
+                    onChange={(e) => handleOnChange(e)}
+                  />
+
+                  {errors?.confirmPassword && (
+                    <p className="text-xs text-red-500">
+                      {errors?.confirmPassword}
+                    </p>
                   )}
                 </div>
 
@@ -227,7 +308,7 @@ function OrgLocationForm({ setModal }) {
                     <InputField
                       variant="auth"
                       extra="mb-3"
-                      label=" Address Line 2*"
+                      label=" Address Line 2"
                       placeholder="Enter Your Address 2"
                       id="addressline2"
                       type="text"
@@ -306,30 +387,7 @@ function OrgLocationForm({ setModal }) {
                     <InputField
                       variant="auth"
                       extra="mb-3"
-                      label="Phone Number*"
-                      placeholder="Enter Your phone number"
-                      id="phone number"
-                      type="text"
-                      name="phone_number"
-                      value={values?.phone_number}
-                      state={errors?.phone_number && "error"}
-                      onChange={(e) => handleOnChange(e)}
-                    />
-
-                    {errors?.phone_number && (
-                      <p className="text-xs text-red-500">
-                        {errors?.phone_number}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div class="sm:col-span-3">
-                  <div class="mt-2">
-                    <InputField
-                      variant="auth"
-                      extra="mb-3"
-                      label="Notes*"
+                      label="Notes"
                       placeholder="Enter Notes"
                       id="addresnotesslincitye2"
                       type="text"
@@ -349,10 +407,11 @@ function OrgLocationForm({ setModal }) {
           <div class="mt-6 flex items-center justify-center gap-x-6">
             <button
               type="submit"
-              class="rounded-md bg-indigo-600 px-10 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              class="flex rounded-md bg-indigo-600 px-10 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               onClick={(e) => handleOnSubmit(e)}
             >
               Submit
+              {loading && <Loader height={25} width={25} />}
             </button>
           </div>
         </form>

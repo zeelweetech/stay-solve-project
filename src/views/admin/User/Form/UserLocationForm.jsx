@@ -52,8 +52,6 @@ function UserLocationForm({ setLocationModal, LocationUserList, secretKey }) {
       ...errors,
       [name]: "",
     });
-
-    console.log("Updated values:", { ...values, [name]: value });
   };
 
   const validation = () => {
@@ -68,7 +66,7 @@ function UserLocationForm({ setLocationModal, LocationUserList, secretKey }) {
     }
 
     if (!values?.username) {
-      newErrors.username = "Please enter your useName";
+      newErrors.username = "Please enter your usename";
     }
 
     if (!values?.mobile_number) {
@@ -125,11 +123,12 @@ function UserLocationForm({ setLocationModal, LocationUserList, secretKey }) {
     return encryptedEmail;
   };
 
-  const VerifyEmail = async (email) => {
+  const VerifyEmail = async (email, password) => {
     const encryptedEmail = encryptEmail(email);
     const body = {
       email: encryptedEmail,
       role: "locationuser",
+      password: password,
     };
     await AddVerifyEmail(body)
       .then((res) => {
@@ -168,7 +167,7 @@ function UserLocationForm({ setLocationModal, LocationUserList, secretKey }) {
             confirmPassword: "",
             locationid: "",
           });
-          VerifyEmail(values?.email);
+          VerifyEmail(values?.email, values?.password);
           LocationUserList();
           setLoading(false);
           setLocationModal(false);
