@@ -12,32 +12,26 @@ function Search() {
   const [startDate1, setStartDate1] = useState();
   const [endDate1, setEndDate1] = useState();
   
- 
 
   const handleSearch = () => {
-    // 
+    //
   };
 
   return (
     <div className="mb-4">
-       <Card extra="flex flex-col bg-white w-full rounded-3xl py-6 px-5  mt-8">
+      <Card extra="flex flex-col bg-white w-full rounded-3xl py-6 px-5  mt-8">
         <div className="grid grid-cols-1 items-center gap-4 sm:grid-cols-2">
           <div className="flex flex-col items-start">
             <label className="mb-2 text-gray-600">Start Date:</label>
             <DatePicker
-              className="datepicker-container  dark-datepicker"
+              className="datepicker-container  "
               selected={startDate}
               onChange={(date) => setStartDate(date)}
               startDate={startDate}
               placeholderText="MM/DD/YYYY"
               customInput={<CustomInput placeholder="Select Start Date" />}
-              style={{
-                // Internal CSS for dark mode placeholder text color
-                '&::placeholder': { color: '#ccc' } // Adjust color as needed
-              }}
              
             />
-           
           </div>
           <div className="flex flex-col items-start">
             <label className="mb-2 text-gray-600">End Date:</label>
@@ -77,19 +71,23 @@ function Search() {
             />
           </div>
         </div>
-        <div className="relative w-full mt-5">
+        <div className="relative mt-5 w-full">
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
             <SearchIcon className="h-5 w-5 text-gray-400 " />
           </div>
           <input
-            className="w-full rounded-lg border py-2 pl-10 pr-3 focus:border-blue-500 focus:outline-none"
+            className="w-11/12 rounded-lg border py-2 pl-10 pr-3 focus:border-blue-500 focus:outline-none"
             label="Search"
             size="lg"
             name="search"
             type="search"
             placeholder="Search..."
-            style={{ paddingLeft: '60px' }}
+            style={{ paddingLeft: "60px" }}
           />
+
+          <button className=" ms-3 rounded-md bg-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+            Search
+          </button>
         </div>
       </Card>
       <Card className="mt-4 rounded-xl bg-white p-6 shadow-md">
