@@ -1,8 +1,69 @@
 import Card from "components/card";
-import React from "react";
-import OrgLocationForm from "views/Organization-admin/Location/Form/OrgLocationForm";
+import SearchIcon from "components/icons/SearchIcon";
+import React, { useEffect, useState } from "react";
+import LocationCardTable from "../Table/LocationCardTable";
 
-function LocationCard({ modal, setModal }) {
+function LocationCard({
+  modal,
+  setModal,
+  location,
+  count,
+  loading,
+  locationCurrentPage,
+  setLocationCurrentPage,
+}) {
+  const [searchItem, setSearchItem] = useState("");
+  const [selectedData, setSelectedData] = useState();
+  const [filteredUsers, setFilteredUsers] = useState([]);
+
+  useEffect(() => {
+    const data = location?.map((item, index) => ({
+      name: item?.data?.name,
+      username: item?.data?.username,
+      email: item?.data?.email,
+      phone_number: item?.data?.phone_number,
+      address_line1: item?.data?.address_line1,
+      address_line2: item?.data?.address_line2,
+      city: item?.data?.city,
+      state: item?.data?.state,
+      zip_code: item?.data?.zip_code,
+      _id: item?.data?._id,
+      verify_code: item?.data?.verify_code,
+      createdAt: item?.data?.createdAt,
+      notes: item?.data?.notes,
+      organizationid: item?.data?.organizationid,
+      parent_organization: item?.parent_organization,
+      locationid: item?.data?.locationid,
+    }));
+    setSelectedData(data);
+    setFilteredUsers(data);
+  }, [searchItem ? searchItem && location : location]);
+
+  const handleInputChange = (e) => {
+    const searchTerm = e.target.value;
+    setSearchItem(searchTerm);
+
+    const filteredItems = selectedData.filter(
+      ({
+        name,
+        username,
+        email,
+        phone_number,
+        address_line1,
+        address_line2,
+        city,
+        state,
+        zip_code,
+        parent_organization,
+      }) => {
+        const searchString =
+          `${name} ${username} ${email} ${phone_number} ${address_line1} ${address_line2} ${city} ${state} ${zip_code} ${parent_organization}`.toLowerCase();
+        return searchString.includes(searchTerm.toLowerCase());
+      }
+    );
+    setFilteredUsers(filteredItems);
+  };
+
   const handleModalOnclick = () => {
     setModal(true);
   };
@@ -20,22 +81,8 @@ function LocationCard({ modal, setModal }) {
                 Search
               </label>
               <div className="relative">
-                <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3">
-                  <svg
-                    className="h-4 w-4 text-gray-500 dark:text-gray-400"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      stroke="currentColor"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                    />
-                  </svg>
+                <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center">
+                  <SearchIcon />
                 </div>
                 <input
                   type="search"
@@ -43,6 +90,8 @@ function LocationCard({ modal, setModal }) {
                   className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-4 ps-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                   placeholder="Search Location..."
                   required
+                  value={searchItem}
+                  onChange={handleInputChange}
                 />
               </div>
             </form>
@@ -53,6 +102,15 @@ function LocationCard({ modal, setModal }) {
           >
             ADD LOCATION
           </button>
+        </div>
+        <div className="mt-10">
+          <LocationCardTable
+            loading={loading}
+            filteredUsers={filteredUsers}
+            locationCurrentPage={locationCurrentPage}
+            setLocationCurrentPage={setLocationCurrentPage}
+            count={count}
+          />
         </div>
       </Card>
     </div>

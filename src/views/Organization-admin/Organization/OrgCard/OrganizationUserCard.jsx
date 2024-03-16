@@ -1,8 +1,57 @@
 import Card from "components/card";
-import React from "react";
-import OrgUserOrganizationForm from "views/Organization-admin/Users/Form/OrgUserOrganizationForm";
+import SearchIcon from "components/icons/SearchIcon";
+import React, { useEffect, useState } from "react";
+import OrganizationUserCardTable from "../Table/OrganizationUserCardTable";
 
-function OrganizationUserCard({ organizationmodal, setOrganizationmodal }) {
+function OrganizationUserCard({
+  organizationmodal,
+  setOrganizationmodal,
+  organizationUser,
+  userCount,
+  organizationUserCurrentPage,
+  setOrganizationUserCurrentPage,
+  orgLoading,
+  decryptedData,
+}) {
+  const [userSearchItem, setUserSearchItem] = useState("");
+  const [organizationfilteredUsers, setOrganizationFilteredUsers] = useState(
+    []
+  );
+  const [orgSelectedData, setOrgSelectedData] = useState();
+
+  useEffect(() => {
+    const data = organizationUser?.map((item, index) => ({
+      fileurl: item?.data?.fileurl,
+      firstname: item?.data?.firstname,
+      username: item?.data?.username,
+      lastname: item?.data?.lastname,
+      email: item?.data?.email,
+      mobile_number: item?.data?.mobile_number,
+      password: item?.data?.password,
+      is_verified: item?.data?.is_verified,
+      organizationid: item?.data?.organizationid,
+      organizationuserid: item?.data?.organizationuserid,
+      parent_organization: item?.parent_organization,
+      _id: item?.data?._id,
+    }));
+    setOrgSelectedData(data);
+    setOrganizationFilteredUsers(data);
+  }, [userSearchItem ? userSearchItem && organizationUser : organizationUser]);
+
+  const handleUserInputChange = (e) => {
+    const userSearchItem = e.target.value;
+    setUserSearchItem(userSearchItem);
+
+    const OrganizationfilteredItems = orgSelectedData.filter(
+      ({ firstname, username, lastname, email, mobile_number }) => {
+        const searchString =
+          `${firstname} ${username} ${lastname} ${email} ${mobile_number}`.toLowerCase();
+        return searchString.includes(userSearchItem.toLowerCase());
+      }
+    );
+    setOrganizationFilteredUsers(OrganizationfilteredItems);
+  };
+
   const handleOrgModalOnclick = () => {
     setOrganizationmodal(true);
   };
@@ -20,29 +69,17 @@ function OrganizationUserCard({ organizationmodal, setOrganizationmodal }) {
                 Search
               </label>
               <div className="relative">
-                <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3">
-                  <svg
-                    className="h-4 w-4 text-gray-500 dark:text-gray-400"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      stroke="currentColor"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                    />
-                  </svg>
+                <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center">
+                  <SearchIcon />
                 </div>
                 <input
                   type="search"
                   id="default-search"
                   className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-4 ps-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                  placeholder="Search Organization User..."
+                  placeholder="Search Org User..."
                   required
+                  value={userSearchItem}
+                  onChange={handleUserInputChange}
                 />
               </div>
             </form>
@@ -53,6 +90,17 @@ function OrganizationUserCard({ organizationmodal, setOrganizationmodal }) {
           >
             ADD ORGANIZATION USER
           </button>
+        </div>
+        <div className="mt-10">
+          <OrganizationUserCardTable
+            organizationUserCurrentPage={organizationUserCurrentPage}
+            orgLoading={orgLoading}
+            userCount={userCount}
+            setOrganizationUserCurrentPage={setOrganizationUserCurrentPage}
+            organizationfilteredUsers={organizationfilteredUsers}
+            decryptedData={decryptedData}
+            userSearchItem={userSearchItem}
+          />
         </div>
       </Card>
     </div>
